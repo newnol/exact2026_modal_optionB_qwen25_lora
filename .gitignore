@@ -1,2 +1,29 @@
+# Secrets
 .env
-__pycache__/modal_exact2026.cpython-313.pyc
+.env.local
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+build/
+
+# Virtual environment
+.venv/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Modal
+modal_requirements.txt
+
+# Temp
+/tmp/
