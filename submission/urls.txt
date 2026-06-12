@@ -1,0 +1,9 @@
+Prediction endpoint:
+https://YOUR_DOMAIN/predict
+
+vLLM model endpoint:
+https://YOUR_VLLM_DOMAIN/v1/models
+
+Expected vLLM models during grading:
+- Qwen/Qwen2.5-7B-Instruct
+- type1-logic
