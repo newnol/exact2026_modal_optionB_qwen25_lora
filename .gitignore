@@ -27,3 +27,10 @@ modal_requirements.txt
 
 # Temp
 /tmp/
+
+# Logs
+*.jsonl
+
+# Old standalone scripts in root
+/type1.py
+/type2.py

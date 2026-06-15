@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import time
 from contextlib import asynccontextmanager
 from typing import Any
 
@@ -7,7 +8,9 @@ from fastapi import FastAPI
 from fastapi.responses import JSONResponse
 
 from app.config import get_settings
+from app.hardware_monitor import snapshot as hw_snapshot
 from app.llm_client import VLLMClient
+from app.logging_utils import log_entry
 from app.pipelines.type1 import solve_type1
 from app.pipelines.type2 import solve_type2
 from app.schemas import PredictRequest, PredictResponseItem, fallback_response
@@ -73,6 +76,8 @@ def _ensure_runtime_clients() -> None:
 
 @app.post("/predict", response_model=list[PredictResponseItem])
 async def predict(payload: PredictRequest) -> list[PredictResponseItem]:
+    t0 = time.time()
+    hw_before = hw_snapshot()
     settings = get_settings()
     _ensure_runtime_clients()
 
@@ -87,6 +92,31 @@ async def predict(payload: PredictRequest) -> list[PredictResponseItem]:
         )
     else:
         item = fallback_response(payload, f"Unsupported type: {payload.type}")
+
+    latency_s = round(time.time() - t0, 3)
+    hw_after = hw_snapshot()
+    log_entry({
+        "event": "predict",
+        "query_id": payload.query_id,
+        "type": payload.type,
+        "request": {
+            "query": payload.query,
+            "premises": payload.premises,
+            "options": payload.options,
+        },
+        "response": {
+            "answer": item.answer,
+            "unit": item.unit,
+            "explanation": item.explanation,
+            "premises_used": item.premises_used,
+        },
+        "latency_s": latency_s,
+        "hw_before": hw_before,
+        "hw_after": hw_after,
+        "model": {
+            "reasoning_type": getattr(item.reasoning, "type", None) if hasattr(item, "reasoning") else None,
+        },
+    })
 
     # Competition requires a list even for one input query.
     return [item]

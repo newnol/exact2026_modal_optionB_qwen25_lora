@@ -1,8 +1,11 @@
 from __future__ import annotations
 
+import time
+
 import httpx
 
 from app.config import Settings
+from app.logging_utils import log_entry
 
 
 class VLLMClient:
@@ -27,7 +30,7 @@ class VLLMClient:
                 raise RuntimeError("/v1/models returned no models")
             return data[0]["id"]
 
-    async def chat_json(self, system_prompt: str, user_prompt: str) -> str:
+    async def chat_json(self, system_prompt: str, user_prompt: str, *, query_id: str = "", pipeline: str = "") -> str:
         model = await self.get_model_name()
         payload = {
             "model": model,
@@ -40,6 +43,7 @@ class VLLMClient:
             # Some vLLM/chat templates support this; if your model rejects it, remove it.
             "response_format": {"type": "json_object"},
         }
+        t0 = time.time()
         timeout = httpx.Timeout(self.settings.request_timeout_seconds)
         async with httpx.AsyncClient(timeout=timeout) as client:
             response = await client.post(
@@ -49,4 +53,16 @@ class VLLMClient:
             )
             response.raise_for_status()
             data = response.json()
-            return data["choices"][0]["message"]["content"]
+        raw = data["choices"][0]["message"]["content"]
+        latency = time.time() - t0
+
+        log_entry({
+            "event": "llm_call",
+            "query_id": query_id,
+            "pipeline": pipeline,
+            "system_prompt": system_prompt,
+            "user_prompt": user_prompt,
+            "raw_response": raw,
+            "latency_s": round(latency, 3),
+        })
+        return raw

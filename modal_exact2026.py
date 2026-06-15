@@ -43,7 +43,7 @@ TYPE2_LORA_REPO = "not-a-real-ai-guy/qwen2.5-type2-option-b-modes-lora"
 GPU_TYPE = "L40S"
 N_GPU = 1
 VLLM_PORT = 8000
-MINUTES = 60
+MINUTES = 20
 
 # Keep 0 during normal testing to avoid surprise GPU cost.
 # Run scripts/modal_keep_warm_on.py before the grading slot to set min_containers=1.
@@ -58,6 +58,7 @@ app = modal_app  # modal deploy expects top-level `app`
 
 hf_cache_vol = modal.Volume.from_name("exact2026-optionb-hf-cache", create_if_missing=True)
 vllm_cache_vol = modal.Volume.from_name("exact2026-optionb-vllm-cache", create_if_missing=True)
+log_vol = modal.Volume.from_name("exact2026-optionb-logs", create_if_missing=True)
 hf_secret = modal.Secret.from_name("huggingface-secret")
 
 vllm_image = (
@@ -156,6 +157,7 @@ def vllm_server():
     scaledown_window=3600,  # max allowed by Modal
     min_containers=0,
     max_containers=2,
+    volumes={"/root/exact/logs": log_vol},
 )
 @modal.asgi_app()
 def predict_api():
@@ -181,6 +183,7 @@ def predict_api():
     os.environ["REQUEST_TIMEOUT_SECONDS"] = "50"
     os.environ["LLM_TEMPERATURE"] = "0"
     os.environ["LLM_MAX_TOKENS"] = "768"
+    os.environ["LOG_FILE_PATH"] = "/root/exact/logs/requests.jsonl"
 
     from app.main import app as fastapi_app
 

@@ -132,7 +132,7 @@ def build_type2_explain_prompt(req: PredictRequest, answer: str, unit: str, plan
 
 
 async def _sandbox_pipeline(req: PredictRequest, llm: VLLMClient) -> dict[str, Any] | None:
-    text = await llm.chat_json(SYSTEM_PROMPT_TYPE2_CODE, build_type2_code_prompt(req))
+    text = await llm.chat_json(SYSTEM_PROMPT_TYPE2_CODE, build_type2_code_prompt(req), query_id=req.query_id, pipeline="type2_code")
     code_obj = extract_json_object(text)
     python_code = str(code_obj.get("python_code", "")).strip()
     unit = str(code_obj.get("unit", "")).strip()
@@ -160,6 +160,7 @@ async def _sandbox_pipeline(req: PredictRequest, llm: VLLMClient) -> dict[str, A
         exp_text = await llm.chat_json(
             SYSTEM_PROMPT_TYPE2_EXPLAIN,
             build_type2_explain_prompt(req, answer=answer, unit=unit, plan=plan, code=python_code),
+            query_id=req.query_id, pipeline="type2_explain",
         )
         exp_obj = extract_json_object(exp_text)
         explanation = str(exp_obj.get("explanation") or explanation).strip() or explanation
@@ -209,7 +210,7 @@ async def solve_type2(
         pass
 
     try:
-        text = await llm.chat_json(SYSTEM_PROMPT_TYPE2_DIRECT, build_type2_direct_prompt(req))
+        text = await llm.chat_json(SYSTEM_PROMPT_TYPE2_DIRECT, build_type2_direct_prompt(req), query_id=req.query_id, pipeline="type2_direct")
         raw = extract_json_object(text)
         return coerce_response(req, raw)
     except Exception as exc:
