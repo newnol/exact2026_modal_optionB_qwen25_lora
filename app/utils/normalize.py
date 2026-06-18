@@ -99,7 +99,7 @@ def audit_premises_used(
                 result.add(i)
 
     # --- Use reasoning steps (FOL trace) as the primary matching target ---
-    rtext = _reasoning_text(raw)
+    rtext = _reasoning_text(raw) or _all_text(raw)
 
     # Words too common across premises to be useful for matching
     _COMMON = frozenset({

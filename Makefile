@@ -11,7 +11,7 @@ mock:
 	MOCK_MODE=true uvicorn app.main:app --host 0.0.0.0 --port 8080 --reload
 
 test:
-	python -m py_compile app/*.py app/pipelines/*.py app/utils/*.py
+	python -m py_compile app/*.py app/pipelines/*.py app/pipelines/graph/*.py app/utils/*.py
 	PYTHONPATH=. pytest -q
 
 curl-type1:

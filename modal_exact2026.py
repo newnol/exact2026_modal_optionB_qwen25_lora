@@ -92,6 +92,8 @@ api_image = (
         "python-dotenv==1.0.1",
         "sympy==1.13.3",
         "z3-solver==4.13.3.0",
+        "langchain-core",
+        "langgraph",
     )
     .add_local_dir(LOCAL_ROOT / "app", remote_path="/root/exact/app")
 )
