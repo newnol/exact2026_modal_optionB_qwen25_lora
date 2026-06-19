@@ -20,9 +20,10 @@ Strict Rules:
 2. "unit" format:
    - Must always be an empty string "" for Type 1 queries.
 3. "premises_used" tracking:
-   - Must contain a list of 0-based indices pointing to the input premises that are contextually relevant or necessary for the deduction (the first premise is index 0).
-   - Include all premises that define the entities, rules, or conditions mentioned directly in the query text, even if they seem redundant to the minimal logical proof. It is safer to include a contextually relevant premise than to omit it.
-   - If the answer is "Uncertain" due to a missing link, list the premises that lead to the point of uncertainty (usually the premise stating the missing condition) AND all premises that define the entities mentioned in the query.
+   - Must contain a list of 0-based indices pointing to the input premises that are logically necessary and sufficient to deduce the final answer (the first premise is index 0).
+   - ONLY include the minimal set of premises that participate directly in the reasoning chain leading to the answer.
+   - Do NOT include redundant premises, rules that were not activated/triggered, or rules that just define entities/context without participating in the deduction path. Over-selecting premises is heavily penalized.
+   - If the answer is "Uncertain" due to a missing link, list only the premises that lead up to the point of uncertainty (the rules that are actually active/relevant to the partial deduction) and the premise stating the missing condition if applicable.
 4. "explanation" format:
    - A concise, natural language explanation detailing step-by-step how the premises lead to the final answer.
 5. "reasoning" format:
@@ -31,10 +32,11 @@ Strict Rules:
 6. "z3_code" format:
    - A standalone Python script string that uses z3-solver (`from z3 import *`) to model the logic and print the final answer to stdout.
    - For choice questions (e.g. Yes/No/Uncertain), the script MUST print exactly one of the options (e.g., "Yes", "No", "Uncertain").
-   - For numeric or text questions, it MUST print the final numeric value or text.
+   - For multiple choice questions (e.g. A, B, C, D), the script MUST check each option sequentially (e.g. by checking if the negation of that option is UNSAT under the premises) and print the option that is proven (e.g. print "A", "B", etc.). If no option is proven, print "Uncertain" or the most logical fallback option from the options.
+   - Z3 Variable Names constraint: Every Z3 variable/constant name MUST be a valid Python identifier, ASCII-only, with no spaces, hyphens (-), or special characters (replace them with underscores `_`). For example, instead of naming a variable `MedKit-7`, use `MedKit_7`. Do not use Vietnamese accented characters.
    - To verify a logic query `Q` using Z3:
-     * Check if premises imply `Q` by adding `Not(Q)` to the solver. If `check() == unsat`, it is proven ("Yes").
-     * Else, check if premises imply `Not(Q)` by adding `Q` to the solver. If `check() == unsat`, it is disproven ("No").
+     * Check if premises imply `Q` by adding `Not(Q)` to the solver. If `check() == unsat`, it is proven ("Yes" or the matching option).
+     * Else, check if premises imply `Not(Q)` by adding `Q` to the solver. If `check() == unsat`, it is disproven ("No" or contradiction).
      * Else, if both are satisfiable, it is "Uncertain".
      This ensures mathematical rigor and prevents over-inference.
 7. "answer" and "z3_code" for math/arithmetic queries:
@@ -83,7 +85,7 @@ Expected Output:
       "may_join_Study_Alpha(Asha)"
     ]
   },
-  "z3_code": "from z3 import *\\ns = Solver()\\ncompleted_ethics_training_Asha = Bool('completed_ethics_training_Asha')\\nhas_lab_access_Asha = Bool('has_lab_access_Asha')\\ncan_handle_participant_data_Asha = Bool('can_handle_participant_data_Asha')\\nhas_supervisor_approval_Asha = Bool('has_supervisor_approval_Asha')\\nmay_join_Study_Alpha_Asha = Bool('may_join_Study_Alpha_Asha')\\ns.add(Implies(And(completed_ethics_training_Asha, has_lab_access_Asha), can_handle_participant_data_Asha))\\ns.add(Implies(And(can_handle_participant_data_Asha, has_supervisor_approval_Asha), may_join_Study_Alpha_Asha))\\ns.add(completed_ethics_training_Asha == True)\\ns.add(has_lab_access_Asha == True)\\ns.add(has_supervisor_approval_Asha == True)\\ns.push()\\ns.add(Not(may_join_Study_Alpha_Asha))\\nif s.check() == unsat:\\n    print('A')\\nelse:\\n    print('Uncertain')\\ns.pop()"
+  "z3_code": "import sys\\nfrom z3 import *\\ns = Solver()\\ncompleted_ethics_training_Asha = Bool('completed_ethics_training_Asha')\\nhas_lab_access_Asha = Bool('has_lab_access_Asha')\\ncan_handle_participant_data_Asha = Bool('can_handle_participant_data_Asha')\\nhas_supervisor_approval_Asha = Bool('has_supervisor_approval_Asha')\\nmay_join_Study_Alpha_Asha = Bool('may_join_Study_Alpha_Asha')\\nhas_budget_approval_Asha = Bool('has_budget_approval_Asha')\\nenrolled_participants = Int('enrolled_participants')\\ns.add(Implies(And(completed_ethics_training_Asha, has_lab_access_Asha), can_handle_participant_data_Asha))\\ns.add(Implies(And(can_handle_participant_data_Asha, has_supervisor_approval_Asha), may_join_Study_Alpha_Asha))\\ns.add(completed_ethics_training_Asha == True)\\ns.add(has_lab_access_Asha == True)\\ns.add(has_supervisor_approval_Asha == True)\\ns.add(enrolled_participants == 12)\\ns.push()\\ns.add(Not(may_join_Study_Alpha_Asha))\\nif s.check() == unsat:\\n    print('A')\\n    sys.exit(0)\\ns.pop()\\ns.push()\\ns.add(can_handle_participant_data_Asha)\\nif s.check() == unsat:\\n    print('B')\\n    sys.exit(0)\\ns.pop()\\ns.push()\\ns.add(Not(has_budget_approval_Asha))\\nif s.check() == unsat:\\n    print('C')\\n    sys.exit(0)\\ns.pop()\\ns.push()\\ns.add(Not(enrolled_participants == 20))\\nif s.check() == unsat:\\n    print('D')\\n    sys.exit(0)\\ns.pop()\\nprint('Uncertain')"
 }
 
 [Example 2: Yes/No/Uncertain Question (Yes Answer)]
