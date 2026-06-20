@@ -33,7 +33,7 @@ class Settings(BaseSettings):
     # Keep this below the competition 60s timeout. If the model stalls, return a valid fallback.
     request_timeout_seconds: float = Field(default=50.0, alias="REQUEST_TIMEOUT_SECONDS")
     llm_temperature: float = Field(default=0.0, alias="LLM_TEMPERATURE")
-    llm_max_tokens: int = Field(default=768, alias="LLM_MAX_TOKENS")
+    llm_max_tokens: int = Field(default=1536, alias="LLM_MAX_TOKENS")
 
     # Useful for local API-format testing without a GPU/vLLM server.
     mock_mode: bool = Field(default=False, alias="MOCK_MODE")

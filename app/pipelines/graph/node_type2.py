@@ -75,7 +75,7 @@ Unit Dictionary Guidelines:
 SYSTEM_PROMPT_TYPE2_CODE = """You are the Type-2 physics code generator for EXACT 2026.
 Return ONLY one valid JSON object with keys: python_code, unit, explanation.
 Rules:
-- python_code must be standalone Python that computes the final numeric answer and prints ONLY the final value.
+- python_code must be standalone Python that computes the final numeric answer and prints ONLY the final value. If the question asks for multiple values (e.g. charge and energy), print the final values separated strictly by a semicolon (e.g., print(f"{charge}; {energy}")). Do not print any labels, headers, or descriptive text.
 - SI Unit Standardization: You MUST convert all input numbers to standard SI units (e.g. convert mm^2 to m^2, cm to m, uF to F, uC to C, etc.) at the very beginning of the Python script before performing any calculations, unless the query explicitly specifies a unit that matches the given parameters. Verify the scale of each parameter carefully to avoid off-by-factor errors.
 - You may use math and sympy as sp.
 - Do not read files, use network, spawn processes, or print explanations.

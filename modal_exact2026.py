@@ -130,7 +130,7 @@ def vllm_server():
         "--port",
         str(VLLM_PORT),
         "--max-model-len",
-        "4096",
+        "8192",
         "--gpu-memory-utilization",
         "0.90",
         "--tensor-parallel-size",
@@ -184,7 +184,7 @@ def predict_api():
     os.environ["TYPE2_FALLBACK_TO_LLM"] = "true"
     os.environ["REQUEST_TIMEOUT_SECONDS"] = "50"
     os.environ["LLM_TEMPERATURE"] = "0"
-    os.environ["LLM_MAX_TOKENS"] = "768"
+    os.environ["LLM_MAX_TOKENS"] = "1536"
     os.environ["LOG_FILE_PATH"] = "/root/exact/logs/requests.jsonl"
 
     from app.main import app as fastapi_app
