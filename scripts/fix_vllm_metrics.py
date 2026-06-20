@@ -106,10 +106,13 @@ def main() -> None:
     p1 = patch_prometheus_routing(site)
     p2 = patch_vllm_metrics(site)
 
+    if p1:
+        print("[fix] prometheus_fastapi_instrumentator routing.py patched")
+    if p2:
+        print("[fix] vLLM metrics file patched")
     if not p1 and not p2:
-        print("[fix] No patches applied - check vLLM version or paths")
-        sys.exit(1)
-    print("[fix] Metrics patches applied successfully")
+        print("[fix] WARNING: No patches applied; vLLM may still crash on /v1/completions")
+    print("[fix] Done")
 
 
 if __name__ == "__main__":
