@@ -71,6 +71,12 @@ vllm_image = (
         "sympy==1.13.3",
         "z3-solver==4.13.3.0",
     )
+    .add_local_file(
+        LOCAL_ROOT / "scripts" / "patch_vllm_metrics.py",
+        remote_path="/root/patch_vllm_metrics.py",
+        copy=True,
+    )
+    .run_commands("python /root/patch_vllm_metrics.py")
     .env(
         {
             "HF_HOME": "/root/.cache/huggingface",
@@ -130,7 +136,7 @@ def vllm_server():
         "--port",
         str(VLLM_PORT),
         "--max-model-len",
-        "4096",
+        "8192",
         "--gpu-memory-utilization",
         "0.90",
         "--tensor-parallel-size",

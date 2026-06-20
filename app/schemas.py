@@ -1,4 +1,6 @@
-from typing import Any, Literal
+from __future__ import annotations
+
+from typing import Any, Literal, Optional, Dict
 from pydantic import BaseModel, Field, field_validator
 
 
@@ -29,7 +31,7 @@ class PredictResponseItem(BaseModel):
     unit: str
     explanation: str
     premises_used: list[int]
-    reasoning: dict[str, Any] | None = None
+    reasoning: Optional[Dict[str, Any]] = None
 
 
 def fallback_response(req: PredictRequest, message: str) -> PredictResponseItem:

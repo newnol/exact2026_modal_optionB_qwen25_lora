@@ -1,0 +1,75 @@
+============================================================
+EXACT 2026 TEST SUITE: datatest1
+Run at: 2026-06-20 08:01:39
+============================================================
+Passed: 37/50 (74.0%)
+Failed: 13
+Avg Request Latency: 18.1s
+Total Time: 906.5s
+
+Failed Details (13):
+  - T1_0013 (type1): expected='D', got='C'
+  - T1_0031 (type1): expected='B', got='A'
+  - T1_0032 (type1): expected='No', got='Uncertain'
+  - T1_0033 (type1): expected='C', got='D'
+  - T1_0042 (type1): expected='Uncertain', got='Yes'
+  - T1_0046 (type1): expected='A', got='D'
+  - T1_GEN_024 (type1): expected='Uncertain', got='No'
+  - T2_0004 (type2): expected='7200', got='7199.999999999998'
+  - T2_0015 (type2): expected='7.07', got='7.0710678118654755'
+  - T2_LD047 (type2): expected='Directed toward q₂', got='Directed toward q2'
+  - T2_TD374 (type2): expected='0; 0', got='Charge: 36.0 μC, Energy: 0.000216 J'
+  - T2_TD386 (type2): expected='decreases by half', got='0.5'
+  - T2_GEN_022 (type2): expected='1', got='999999999'
+
+All Details (50 items):
+  [PASS] T1_0008 (type1): No -> No (71.5s)
+  [FAIL] T1_0013 (type1): D -> C (32.8s)
+  [PASS] T1_0022 (type1): Yes -> Yes (30.6s)
+  [PASS] T1_0023 (type1): A -> A (29.0s)
+  [PASS] T1_0027 (type1): D -> D (38.6s)
+  [FAIL] T1_0031 (type1): B -> A (37.4s)
+  [FAIL] T1_0032 (type1): No -> Uncertain (37.4s)
+  [FAIL] T1_0033 (type1): C -> D (35.6s)
+  [PASS] T1_0034 (type1): Yes -> Yes (34.5s)
+  [PASS] T1_0039 (type1): C -> C (17.2s)
+  [FAIL] T1_0042 (type1): Uncertain -> Yes (17.2s)
+  [FAIL] T1_0046 (type1): A -> D (36.9s)
+  [PASS] T1_0048 (type1): Uncertain -> Uncertain (13.9s)
+  [PASS] T1_TEST (type1): No -> No (8.7s)
+  [PASS] T1_NUM_001 (type1): 12 -> 12 (9.8s)
+  [PASS] T1_NUM_002 (type1): 18 -> 18 (19.1s)
+  [PASS] T1_NUM_003 (type1): 3 -> 3 (20.9s)
+  [PASS] T1_TXT_001 (type1): Asha -> Asha (13.8s)
+  [PASS] T1_TXT_002 (type1): Professor Green -> Professor Green (25.0s)
+  [PASS] T1_TXT_003 (type1): Charlie -> Charlie (28.3s)
+  [PASS] T1_GEN_021 (type1): No -> No (15.6s)
+  [PASS] T1_GEN_022 (type1): Yes -> Yes (18.7s)
+  [PASS] T1_GEN_023 (type1): Uncertain -> Uncertain (21.4s)
+  [FAIL] T1_GEN_024 (type1): Uncertain -> No (9.6s)
+  [PASS] T1_GEN_025 (type1): No -> No (16.1s)
+  [PASS] T2_0002 (type2): 1.5e-4 -> 0.00015 (9.8s)
+  [FAIL] T2_0004 (type2): 7200 -> 7199.999999999998 (19.8s)
+  [PASS] T2_0005 (type2): 450 -> 450.0 (14.8s)
+  [PASS] T2_0007 (type2): 1800 -> 1800.0 (8.8s)
+  [PASS] T2_0009 (type2): 6 -> 6 (1.2s)
+  [PASS] T2_0013 (type2): 50 -> 50.0 (11.5s)
+  [FAIL] T2_0015 (type2): 7.07 -> 7.0710678118654755 (12.4s)
+  [PASS] T2_0017 (type2): 31500 -> 31500.0 (10.0s)
+  [PASS] T2_0028 (type2): 3 -> 3.0 (7.5s)
+  [PASS] T2_0029 (type2): 1.5e-5 -> 1.5e-05 (10.2s)
+  [PASS] T2_0049 (type2): 48 -> 48.0 (10.3s)
+  [PASS] T2_TEST (type2): 5 -> 5 (1.5s)
+  [FAIL] T2_LD047 (type2): Directed toward q₂ -> Directed toward q2 (20.0s)
+  [FAIL] T2_TD374 (type2): 0; 0 -> Charge: 36.0 μC, Energy: 0.000216 J (13.6s)
+  [FAIL] T2_TD386 (type2): decreases by half -> 0.5 (12.1s)
+  [PASS] T2_GEN_016 (type2): 4 -> 4.0 (11.7s)
+  [PASS] T2_GEN_017 (type2): 3 -> 3.0 (7.6s)
+  [PASS] T2_GEN_018 (type2): 240 -> 240.0 (11.8s)
+  [PASS] T2_GEN_019 (type2): 5 -> 5.0 (8.2s)
+  [PASS] T2_GEN_020 (type2): 2 -> 2.0 (7.4s)
+  [PASS] T2_GEN_021 (type2): 885.4 -> 885.4 (14.8s)
+  [FAIL] T2_GEN_022 (type2): 1 -> 999999999 (11.5s)
+  [PASS] T2_GEN_023 (type2): 25 -> 25 (11.9s)
+  [PASS] T2_GEN_024 (type2): 50 -> 50.0 (11.0s)
+  [PASS] T2_GEN_025 (type2): 0.6 -> 0.6 (7.5s)

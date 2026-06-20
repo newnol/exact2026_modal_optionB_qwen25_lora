@@ -34,6 +34,8 @@ class Settings(BaseSettings):
     request_timeout_seconds: float = Field(default=50.0, alias="REQUEST_TIMEOUT_SECONDS")
     llm_temperature: float = Field(default=0.0, alias="LLM_TEMPERATURE")
     llm_max_tokens: int = Field(default=768, alias="LLM_MAX_TOKENS")
+    type1_llm_max_tokens: int = Field(default=384, alias="TYPE1_LLM_MAX_TOKENS")
+    type2_llm_max_tokens: int = Field(default=768, alias="TYPE2_LLM_MAX_TOKENS")
 
     # Useful for local API-format testing without a GPU/vLLM server.
     mock_mode: bool = Field(default=False, alias="MOCK_MODE")

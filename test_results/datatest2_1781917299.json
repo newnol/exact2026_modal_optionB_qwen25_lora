@@ -1,0 +1,651 @@
+{
+  "passed": 27,
+  "failed": 23,
+  "errors": [],
+  "details": [
+    {
+      "query_id": "T1_0021",
+      "type": "type1",
+      "status": "PASS",
+      "elapsed_s": 35.4,
+      "expected_answer": "A",
+      "actual_answer": "A",
+      "explanation": "The premises state that the Amber Amulet has a humidity-control log, no pest damage, and is fragile. According to the rules, this means it is storage-ready, eligible for exhibition, and requires low-light protection. Since it can be placed on public display, it must be displayed in a climate-controlled case.",
+      "premises_used": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9
+      ]
+    },
+    {
+      "query_id": "T1_0031",
+      "type": "type1",
+      "status": "FAIL",
+      "elapsed_s": 37.4,
+      "expected_answer": "B",
+      "actual_answer": "A",
+      "explanation": "Type 1 pipeline failed safely: unterminated JSON object",
+      "premises_used": []
+    },
+    {
+      "query_id": "T1_0025",
+      "type": "type1",
+      "status": "FAIL",
+      "elapsed_s": 37.4,
+      "expected_answer": "C",
+      "actual_answer": "A",
+      "explanation": "Type 1 pipeline failed safely: unterminated JSON object",
+      "premises_used": []
+    },
+    {
+      "query_id": "T1_0027",
+      "type": "type1",
+      "status": "PASS",
+      "elapsed_s": 38.4,
+      "expected_answer": "D",
+      "actual_answer": "D",
+      "explanation": "Mira has a fever (Premise 5) and low oxygen saturation (Premise 6), so she is placed in respiratory isolation (Premise 0). With a positive rapid test (Premise 7), she enters the antiviral protocol (Premise 1). Renal impairment is present (Premise 8), requiring dose adjustment (Premise 3), which means she needs dose review before receiving the standard antiviral dose (Premise 4). Thus, Mira enters the antiviral protocol and requires dose review.",
+      "premises_used": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ]
+    },
+    {
+      "query_id": "T1_0035",
+      "type": "type1",
+      "status": "FAIL",
+      "elapsed_s": 37.4,
+      "expected_answer": "D",
+      "actual_answer": "A",
+      "explanation": "Type 1 pipeline failed safely: unterminated JSON object",
+      "premises_used": []
+    },
+    {
+      "query_id": "T1_0039",
+      "type": "type1",
+      "status": "PASS",
+      "elapsed_s": 30.3,
+      "expected_answer": "C",
+      "actual_answer": "C",
+      "explanation": "Batch Nova stayed between 2 and 8 degrees Celsius (Premise 5) and has an intact seal (Premise 6). According to Premise 0, this makes it viable. Since it has a complete temperature log (Premise 7), clinic distribution is allowed (Premise 1). Given the recipient clinic is certified (Premise 8), Batch Nova can be administered (Premise 2), supporting option C.",
+      "premises_used": [
+        0,
+        1,
+        2,
+        5,
+        6,
+        7,
+        8,
+        9
+      ]
+    },
+    {
+      "query_id": "T1_0023",
+      "type": "type1",
+      "status": "PASS",
+      "elapsed_s": 26.2,
+      "expected_answer": "A",
+      "actual_answer": "A",
+      "explanation": "The Atlas case is audit-ready because it is contained and the forensic report has been submitted, but formal closure is not established by the premises.",
+      "premises_used": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ]
+    },
+    {
+      "query_id": "T1_0033",
+      "type": "type1",
+      "status": "FAIL",
+      "elapsed_s": 36.4,
+      "expected_answer": "C",
+      "actual_answer": "D",
+      "explanation": "If Azure Reef shows bleaching signs and has a temperature anomaly, a stress alert is issued. With a stress alert and coral cover below 30%, it becomes a restoration priority. Given high local fishing pressure, a temporary no-take zone is recommended but not implemented, so Azure Reef has no stress alert.",
+      "premises_used": [
+        0,
+        1,
+        2,
+        6
+      ]
+    },
+    {
+      "query_id": "T1_0046",
+      "type": "type1",
+      "status": "FAIL",
+      "elapsed_s": 38.8,
+      "expected_answer": "A",
+      "actual_answer": "D",
+      "explanation": "Since Linh has first-aid certification (Premise 3) and completed patient privacy training (Premise 4), she may assist at the triage desk (Premise 0). However, since the morning triage shift needs only 3 volunteers but has 5 available (Premise 5 and Premise 6), not all volunteers can be assigned, so Linh cannot assist at the triage desk.",
+      "premises_used": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ]
+    },
+    {
+      "query_id": "T1_0013",
+      "type": "type1",
+      "status": "FAIL",
+      "elapsed_s": 34.3,
+      "expected_answer": "D",
+      "actual_answer": "C",
+      "explanation": "Manuscript Nova reports a preregistered hypothesis (Premise 3) and releases its analysis code (Premise 4). According to Premise 0, this improves methodological transparency. Then, according to Premise 1, since it passes the reproducibility checklist, it is eligible for open science recognition (Premise 2). Therefore, Manuscript Nova lacks methodological transparency (not eligible for open science recognition implies lack of transparency), making option C the correct conclusion.",
+      "premises_used": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5
+      ]
+    },
+    {
+      "query_id": "T1_0015",
+      "type": "type1",
+      "status": "PASS",
+      "elapsed_s": 26.3,
+      "expected_answer": "B",
+      "actual_answer": "B",
+      "explanation": "Robot Kappa has obstacle detection (Premise 3) and obstacle detection implies safe navigation (Premise 0), so it can navigate aisles safely. Additionally, Robot Kappa has barcode scanning (Premise 4), and being able to navigate aisles safely and having barcode scanning implies picking inventory items (Premise 1), so Robot Kappa can pick inventory items.",
+      "premises_used": [
+        0,
+        1,
+        3,
+        4,
+        5,
+        6
+      ]
+    },
+    {
+      "query_id": "T1_0007",
+      "type": "type1",
+      "status": "PASS",
+      "elapsed_s": 30.4,
+      "expected_answer": "B",
+      "actual_answer": "B",
+      "explanation": "Satellite Vega has calibrated thermal sensors (Premise 3), so it can monitor surface temperature (Premise 0). Although it lacks cloud-penetrating radar (Premise 4), it can still monitor surface temperature, making it capable of supporting disaster mapping (Premise 1). Since it can support disaster mapping, it can provide emergency response data (Premise 2). However, since it does not have cloud-penetrating radar, it cannot fully meet the requirement in option D. Option B is the best-supported statement because it combines both capabilities without requiring additional conditions.",
+      "premises_used": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "query_id": "T1_0041",
+      "type": "type1",
+      "status": "PASS",
+      "elapsed_s": 18.7,
+      "expected_answer": "A",
+      "actual_answer": "A",
+      "explanation": "Since Asha did not complete ethics training (Premise 3) and does not have lab access (Premise 4), she cannot handle participant data according to Premise 0. Therefore, option B is logically supported.",
+      "premises_used": [
+        7
+      ]
+    },
+    {
+      "query_id": "T1_0026",
+      "type": "type1",
+      "status": "FAIL",
+      "elapsed_s": 37.4,
+      "expected_answer": "Yes",
+      "actual_answer": "Uncertain",
+      "explanation": "Type 1 pipeline failed safely: unterminated JSON object",
+      "premises_used": []
+    },
+    {
+      "query_id": "T1_0022",
+      "type": "type1",
+      "status": "PASS",
+      "elapsed_s": 30.3,
+      "expected_answer": "Yes",
+      "actual_answer": "Yes",
+      "explanation": "The Amber Amulet has a humidity-control log and no pest-damage report, making it storage-ready (Premise 0). It also has a provenance certificate (Premise 7), so it is eligible for exhibition (Premise 1). With curator approval (Premise 8), it can be placed on public display (Premise 2), satisfying all conditions.",
+      "premises_used": [
+        0,
+        1,
+        2,
+        5,
+        6,
+        7,
+        8,
+        9
+      ]
+    },
+    {
+      "query_id": "T1_0030",
+      "type": "type1",
+      "status": "PASS",
+      "elapsed_s": 31.9,
+      "expected_answer": "Yes",
+      "actual_answer": "Yes",
+      "explanation": "The Harbor microgrid has a high resilience score because it meets all the conditions: the solar array is online (Premise 4), the battery bank is charged (Premise 5), the load forecast is stable (Premise 6), and the diesel backup has been tested (Premise 7). According to Premise 2, if night service can be maintained and the diesel backup has been tested, then the microgrid has a high resilience score.",
+      "premises_used": [
+        0,
+        1,
+        2,
+        4,
+        5,
+        6,
+        7
+      ]
+    },
+    {
+      "query_id": "T1_0034",
+      "type": "type1",
+      "status": "PASS",
+      "elapsed_s": 31.5,
+      "expected_answer": "Yes",
+      "actual_answer": "Yes",
+      "explanation": "Azure Reef shows bleaching signs (Premise 4) and has a temperature anomaly (Premise 5), so a stress alert is issued (Premise 0). With a stress alert and coral cover below 30 percent (Premise 6), it becomes a restoration priority (Premmise 1). Since it's a restoration priority and has high local fishing pressure (Premise 7), a temporary no-take zone is recommended (Premise 2).",
+      "premises_used": [
+        0,
+        1,
+        2,
+        4,
+        5,
+        6,
+        7
+      ]
+    },
+    {
+      "query_id": "T1_0042",
+      "type": "type1",
+      "status": "PASS",
+      "elapsed_s": 17.2,
+      "expected_answer": "Yes",
+      "actual_answer": "Yes",
+      "explanation": "Asha completed ethics training (Premise 3), has lab access (Premise 4), and has supervisor approval (Premise 5). Thus she can handle participant data (Premise 0) and may join Study Alpha (Premise 1). Since every researcher who may join Study Alpha is listed as an active contributor (Premise 2), Asha is listed as an active contributor.",
+      "premises_used": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5
+      ]
+    },
+    {
+      "query_id": "T1_0024",
+      "type": "type1",
+      "status": "FAIL",
+      "elapsed_s": 15.9,
+      "expected_answer": "No",
+      "actual_answer": "Yes",
+      "explanation": "The premises show that the Atlas server is patched and its logs have been reviewed, so the incident is contained (Premise 0). All affected Atlas passwords have been reset, securing the affected account (Premise 1). The forensic report has been submitted, making the case audit-ready (Premise 2). Since the case is audit-ready and a manager signs off, it can be formally closed (Premise 3).",
+      "premises_used": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ]
+    },
+    {
+      "query_id": "T1_0028",
+      "type": "type1",
+      "status": "PASS",
+      "elapsed_s": 34.5,
+      "expected_answer": "No",
+      "actual_answer": "No",
+      "explanation": "Mira has a fever (Premise 5) and low oxygen saturation (Premise 6), so she is placed in respiratory isolation (Premise 0). With a positive rapid test (Premise 7), she enters the antiviral protocol (Premise 1). However, Mira has renal impairment (Premise 8), requiring dose adjustment (Premise 3). According to Premise 4, patients needing dose adjustment should not receive the standard antiviral dose without review, so Mira should not receive the standard dose.",
+      "premises_used": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ]
+    },
+    {
+      "query_id": "T1_0008",
+      "type": "type1",
+      "status": "PASS",
+      "elapsed_s": 14.2,
+      "expected_answer": "No",
+      "actual_answer": "No",
+      "explanation": "Having thermal sensors and an optical camera does not guarantee emergency response data because the satellite lacks cloud-penetrating radar.",
+      "premises_used": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "query_id": "T1_0016",
+      "type": "type1",
+      "status": "PASS",
+      "elapsed_s": 31.8,
+      "expected_answer": "No",
+      "actual_answer": "No",
+      "explanation": "Robot Kappa has obstacle detection and barcode scanning but lacks weight verification, so it does not satisfy all requirements for preparing outbound orders.",
+      "premises_used": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ]
+    },
+    {
+      "query_id": "T1_0032",
+      "type": "type1",
+      "status": "FAIL",
+      "elapsed_s": 37.3,
+      "expected_answer": "No",
+      "actual_answer": "Uncertain",
+      "explanation": "Type 1 pipeline failed safely: unterminated JSON object",
+      "premises_used": []
+    },
+    {
+      "query_id": "T1_0043",
+      "type": "type1",
+      "status": "PASS",
+      "elapsed_s": 7.4,
+      "expected_answer": "Uncertain",
+      "actual_answer": "Uncertain",
+      "explanation": "No premise states whether Asha has budget approval (Premise 7). Thus, it is uncertain.",
+      "premises_used": [
+        7
+      ]
+    },
+    {
+      "query_id": "T1_0048",
+      "type": "type1",
+      "status": "PASS",
+      "elapsed_s": 13.7,
+      "expected_answer": "Uncertain",
+      "actual_answer": "Uncertain",
+      "explanation": "No premise states that Linh has pharmacy training (Premise 7). Thus, it is uncertain whether she has it or not.",
+      "premises_used": [
+        7
+      ]
+    },
+    {
+      "query_id": "T2_0001",
+      "type": "type2",
+      "status": "FAIL",
+      "elapsed_s": 11.5,
+      "expected_answer": "3.38 × 10^-3",
+      "actual_answer": "0.003384",
+      "explanation": "The energy stored in a capacitor is given by E = ½ C U². Converting 47 μF to farads gives 47 × 10⁻⁶ F. Substituting U = 12 V yields E = 0.5 × 47e-6 × 12² = 0.003384 J.",
+      "premises_used": []
+    },
+    {
+      "query_id": "T2_0002",
+      "type": "type2",
+      "status": "FAIL",
+      "elapsed_s": 9.0,
+      "expected_answer": "150",
+      "actual_answer": "0.00015",
+      "explanation": "The capacitance is calculated by converting the given charge from milliCoulombs to Coulombs and then applying the fundamental relation C = Q / U.",
+      "premises_used": []
+    },
+    {
+      "query_id": "T2_0003",
+      "type": "type2",
+      "status": "FAIL",
+      "elapsed_s": 12.7,
+      "expected_answer": "1.5",
+      "actual_answer": "1.5000000000000004",
+      "explanation": "The magnitude of the electrostatic force between two point charges is given by Coulomb's law: F = k|q1q2|/r^2. Converting the charges from microcoulombs to coulombs (3.0×10^-6 C and 5.0×10^-6 C) and substituting the given values yields a force magnitude of approximately 1.50 N.",
+      "premises_used": []
+    },
+    {
+      "query_id": "T2_0004",
+      "type": "type2",
+      "status": "FAIL",
+      "elapsed_s": 15.8,
+      "expected_answer": "7.20 × 10^3",
+      "actual_answer": "0.0",
+      "explanation": "The two charges +4.0 nC and -4.0 nC are placed 20 cm apart. The midpoint is 10 cm from each charge. The electric field from each charge has the same magnitude (k|q|/r²). Since the fields point in opposite directions, they cancel exactly, resulting in a net electric field of zero.",
+      "premises_used": []
+    },
+    {
+      "query_id": "T2_0005",
+      "type": "type2",
+      "status": "PASS",
+      "elapsed_s": 15.0,
+      "expected_answer": "450",
+      "actual_answer": "450.0",
+      "explanation": "The electric potential at point P due to a point charge is given by V = kq/r. Using k = 9.0 × 10^9 N·m²/C², q1 = +6.0 nC = 6.0 × 10^-9 C at distance 10 cm = 0.10 m gives V1 = 450 V. For q2 = -2.0 nC = -2.0 × 10^-9 C at 20 cm = 0.20 m, V2 = -450 V. The total potential is V_total = 450 V + (-450 V) = 0 V.",
+      "premises_used": []
+    },
+    {
+      "query_id": "T2_0006",
+      "type": "type2",
+      "status": "FAIL",
+      "elapsed_s": 14.0,
+      "expected_answer": "36",
+      "actual_answer": "0.000108 5.4e-05",
+      "explanation": "In a series connection, both capacitors carry the same charge. Using Q = CV, the charge on C1 is 6 μF × 18 V = 108 μC, and the charge on C2 is 3 μF × 18 V = 54 μC.",
+      "premises_used": []
+    },
+    {
+      "query_id": "T2_0007",
+      "type": "type2",
+      "status": "PASS",
+      "elapsed_s": 8.7,
+      "expected_answer": "1800",
+      "actual_answer": "1800.0",
+      "explanation": "The energy converted in the resistor is calculated using the formula E = V²t/R. Converting 5 minutes to seconds gives 300 s. Substituting V = 12 V, R = 24 Ω yields E = 1800 J.",
+      "premises_used": []
+    },
+    {
+      "query_id": "T2_0008",
+      "type": "type2",
+      "status": "PASS",
+      "elapsed_s": 7.4,
+      "expected_answer": "0.5",
+      "actual_answer": "0.5",
+      "explanation": "For resistors in series, the total resistance is the sum of individual resistances. Using Ohm's law, the current is the applied voltage divided by the total resistance.",
+      "premises_used": []
+    },
+    {
+      "query_id": "T2_0009",
+      "type": "type2",
+      "status": "PASS",
+      "elapsed_s": 1.2,
+      "expected_answer": "6",
+      "actual_answer": "6",
+      "explanation": "For two resistors in parallel, Req = 2 ohm, so I = V/Req = 12/2 = 6 A.",
+      "premises_used": []
+    },
+    {
+      "query_id": "T2_0010",
+      "type": "type2",
+      "status": "FAIL",
+      "elapsed_s": 13.9,
+      "expected_answer": "50.3",
+      "actual_answer": "50329.21210448704",
+      "explanation": "The resonant frequency of an LC circuit is found by converting the given capacitance from microfarads to farads, then applying the formula f = 1/(2π√(LC)). With L = 0.20 H and C = 50 μF = 50 × 10⁻⁶ F, the computed resonant frequency is approximately 50329.21 Hz.",
+      "premises_used": []
+    },
+    {
+      "query_id": "T2_0011",
+      "type": "type2",
+      "status": "FAIL",
+      "elapsed_s": 8.8,
+      "expected_answer": "151",
+      "actual_answer": "150.79644737231007",
+      "explanation": "The inductive reactance is calculated using the formula X_L = 2πfL. Substituting f = 60 Hz and L = 0.40 H gives approximately 150.8 Ω.",
+      "premises_used": []
+    },
+    {
+      "query_id": "T2_0012",
+      "type": "type2",
+      "status": "FAIL",
+      "elapsed_s": 13.2,
+      "expected_answer": "1",
+      "actual_answer": "{\"value\": 1.0, \"unit\": \"m/s^2\"}",
+      "explanation": "The car accelerates uniformly from 8 m/s over 6 seconds to cover 66 meters. Using the kinematic equation d = v0*t + (1/2)*a*t^2, solving for a gives 1.0 m/s^2.",
+      "premises_used": []
+    },
+    {
+      "query_id": "T2_0013",
+      "type": "type2",
+      "status": "PASS",
+      "elapsed_s": 12.1,
+      "expected_answer": "50",
+      "actual_answer": "50.0",
+      "explanation": "The car starts at 20 m/s and decelerates uniformly to rest over a distance. Using the kinematic equation v^2 = v0^2 + 2ad with v = 0, v0 = 20 m/s, and a = -4.0 m/s^2 gives d = 50 m.",
+      "premises_used": []
+    },
+    {
+      "query_id": "T2_0014",
+      "type": "type2",
+      "status": "PASS",
+      "elapsed_s": 10.8,
+      "expected_answer": "678",
+      "actual_answer": "678.0",
+      "explanation": "The normal force is the force exerted by the elevator floor on the person. Since the elevator accelerates upward, the person experiences a net upward force equal to their mass times the sum of gravity and acceleration. Using m=60 kg, g=9.8 m/s², and a=1.5 m/s² gives a net force of 678 N.",
+      "premises_used": []
+    },
+    {
+      "query_id": "T2_0015",
+      "type": "type2",
+      "status": "FAIL",
+      "elapsed_s": 13.8,
+      "expected_answer": "7.07",
+      "actual_answer": "7.0710678118654755",
+      "explanation": "The object starts from rest, so its initial kinetic energy is zero. The work done by the constant net force over a distance equals the change in kinetic energy. Solving for the final speed yields approximately 7.07 m/s.",
+      "premises_used": []
+    },
+    {
+      "query_id": "T2_0016",
+      "type": "type2",
+      "status": "PASS",
+      "elapsed_s": 13.3,
+      "expected_answer": "19.6",
+      "actual_answer": "19.6",
+      "explanation": "The ball is thrown vertically upward with an initial speed of 19.6 m/s. Using the kinematic equation v^2 = v0^2 + 2*a*h, at the maximum height the final velocity is zero. Solving for h gives h_max = v0^2 / (2*g). Substituting v0 = 19.6 m/s and g = 9.8 m/s^2 yields h_max = 19.6 m.",
+      "premises_used": []
+    },
+    {
+      "query_id": "T2_0017",
+      "type": "type2",
+      "status": "FAIL",
+      "elapsed_s": 9.5,
+      "expected_answer": "3.15 × 10^4",
+      "actual_answer": "31500.0",
+      "explanation": "The heat required is calculated using Q = mcΔT. Substituting m = 0.50 kg, ΔT = 15 °C, and c = 4200 J/(kg·°C) gives Q = 31500 J.",
+      "premises_used": []
+    },
+    {
+      "query_id": "T2_0018",
+      "type": "type2",
+      "status": "FAIL",
+      "elapsed_s": 9.1,
+      "expected_answer": "6.68 × 10^4",
+      "actual_answer": "66800.0",
+      "explanation": "The heat required to melt ice is found by multiplying the mass of ice by its latent heat of fusion. Using the given values, the calculation yields 66800 J.",
+      "premises_used": []
+    },
+    {
+      "query_id": "T2_0019",
+      "type": "type2",
+      "status": "FAIL",
+      "elapsed_s": 12.8,
+      "expected_answer": "1.25 × 10^5",
+      "actual_answer": "124709.99999999999",
+      "explanation": "The pressure is calculated using the ideal gas law P = nRT/V. Substituting n = 0.50 mol, T = 300 K, V = 0.010 m³, and R = 8.314 J/(mol·K) gives P = 12471 Pa.",
+      "premises_used": []
+    },
+    {
+      "query_id": "T2_0020",
+      "type": "type2",
+      "status": "PASS",
+      "elapsed_s": 11.9,
+      "expected_answer": "60",
+      "actual_answer": "60.00",
+      "explanation": "The image distance is found using the lens equation 1/di + 1/do = 1/f. Substituting do = 30 cm and f = 20 cm gives 1/di + 1/30 = 1/20. Solving yields di = 60 cm.",
+      "premises_used": []
+    },
+    {
+      "query_id": "T2_0028",
+      "type": "type2",
+      "status": "PASS",
+      "elapsed_s": 7.5,
+      "expected_answer": "3",
+      "actual_answer": "3.0",
+      "explanation": "The power consumed by the lamp is found using the formula P = U * I. With U = 12 V and I = 0.25 A, the calculation yields P = 3.0 W.",
+      "premises_used": []
+    },
+    {
+      "query_id": "T2_0029",
+      "type": "type2",
+      "status": "FAIL",
+      "elapsed_s": 10.2,
+      "expected_answer": "15",
+      "actual_answer": "1.5e-05",
+      "explanation": "The work done by a charge moving through a potential difference is given by W = qU. Converting 3 μC to coulombs gives 3 × 10⁻⁶ C. Multiplying by 5 V yields 1.5 × 10⁻⁵ J.",
+      "premises_used": []
+    },
+    {
+      "query_id": "T2_0039",
+      "type": "type2",
+      "status": "FAIL",
+      "elapsed_s": 11.4,
+      "expected_answer": "1",
+      "actual_answer": "1000000.0",
+      "explanation": "The resistance of a conductor is given by R = ρL/S, where ρ is resistivity, L is length, and S is cross-sectional area. Converting the area from 1 mm² to 1e-6 m² and substituting the given values yields R = 1000000 Ω.",
+      "premises_used": []
+    },
+    {
+      "query_id": "T2_0049",
+      "type": "type2",
+      "status": "PASS",
+      "elapsed_s": 10.0,
+      "expected_answer": "48",
+      "actual_answer": "48.0",
+      "explanation": "The secondary voltage is found using the transformer voltage ratio: U2 = U1 * (N2/N1). Substituting the given values yields U2 = 48 V.",
+      "premises_used": []
+    },
+    {
+      "query_id": "T2_0050",
+      "type": "type2",
+      "status": "PASS",
+      "elapsed_s": 8.4,
+      "expected_answer": "1",
+      "actual_answer": "1.00000000000000",
+      "explanation": "The power dissipated by a resistor is given by P = I^2 R. Solving for R gives R = P / I^2. Substituting P = 9 W and I = 3 A yields R = 9 / 9 = 1 Ω.",
+      "premises_used": []
+    }
+  ]
+}

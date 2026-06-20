@@ -12,4 +12,3 @@ def route_by_type(state: AgentState) -> str:
             return "fast_path"
         return "type2"
     return "type1"
-

@@ -1,0 +1,46 @@
+============================================================
+COMBINED COMPARISON - 2026-06-20 08:01:39
+============================================================
+
+datatest1: 37/50 (74.0%)
+
+datatest2: 27/50 (54.0%)
+
+------------------------------------------------------------
+Failed items comparison:
+  [datatest1] T1_0013 (type1): expected='D', got='C'
+  [datatest1] T1_0031 (type1): expected='B', got='A'
+  [datatest1] T1_0032 (type1): expected='No', got='Uncertain'
+  [datatest1] T1_0033 (type1): expected='C', got='D'
+  [datatest1] T1_0042 (type1): expected='Uncertain', got='Yes'
+  [datatest1] T1_0046 (type1): expected='A', got='D'
+  [datatest1] T1_GEN_024 (type1): expected='Uncertain', got='No'
+  [datatest1] T2_0004 (type2): expected='7200', got='7199.999999999998'
+  [datatest1] T2_0015 (type2): expected='7.07', got='7.0710678118654755'
+  [datatest1] T2_LD047 (type2): expected='Directed toward q₂', got='Directed toward q2'
+  [datatest1] T2_TD374 (type2): expected='0; 0', got='Charge: 36.0 μC, Energy: 0.000216 J'
+  [datatest1] T2_TD386 (type2): expected='decreases by half', got='0.5'
+  [datatest1] T2_GEN_022 (type2): expected='1', got='999999999'
+  [datatest2] T1_0031 (type1): expected='B', got='A'
+  [datatest2] T1_0025 (type1): expected='C', got='A'
+  [datatest2] T1_0035 (type1): expected='D', got='A'
+  [datatest2] T1_0033 (type1): expected='C', got='D'
+  [datatest2] T1_0046 (type1): expected='A', got='D'
+  [datatest2] T1_0013 (type1): expected='D', got='C'
+  [datatest2] T1_0026 (type1): expected='Yes', got='Uncertain'
+  [datatest2] T1_0024 (type1): expected='No', got='Yes'
+  [datatest2] T1_0032 (type1): expected='No', got='Uncertain'
+  [datatest2] T2_0001 (type2): expected='3.38 × 10^-3', got='0.003384'
+  [datatest2] T2_0002 (type2): expected='150', got='0.00015'
+  [datatest2] T2_0003 (type2): expected='1.5', got='1.5000000000000004'
+  [datatest2] T2_0004 (type2): expected='7.20 × 10^3', got='0.0'
+  [datatest2] T2_0006 (type2): expected='36', got='0.000108 5.4e-05'
+  [datatest2] T2_0010 (type2): expected='50.3', got='50329.21210448704'
+  [datatest2] T2_0011 (type2): expected='151', got='150.79644737231007'
+  [datatest2] T2_0012 (type2): expected='1', got='{"value": 1.0, "unit": "m/s^2"}'
+  [datatest2] T2_0015 (type2): expected='7.07', got='7.0710678118654755'
+  [datatest2] T2_0017 (type2): expected='3.15 × 10^4', got='31500.0'
+  [datatest2] T2_0018 (type2): expected='6.68 × 10^4', got='66800.0'
+  [datatest2] T2_0019 (type2): expected='1.25 × 10^5', got='124709.99999999999'
+  [datatest2] T2_0029 (type2): expected='15', got='1.5e-05'
+  [datatest2] T2_0039 (type2): expected='1', got='1000000.0'

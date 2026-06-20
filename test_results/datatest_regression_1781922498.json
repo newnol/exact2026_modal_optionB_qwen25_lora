@@ -1,0 +1,247 @@
+{
+  "passed": 16,
+  "failed": 7,
+  "errors": [],
+  "details": [
+    {
+      "query_id": "REG_T1_0025",
+      "type": "type1",
+      "status": "FAIL",
+      "elapsed_s": 1.6,
+      "expected_answer": "C",
+      "actual_answer": "A",
+      "explanation": "LLM Type 1 call failed: Client error '400 Bad Request' for url 'https://velbertrack--exact2026-optionb-qwen25-vllm-server.modal.run/v1/chat/completions'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/400",
+      "premises_used": [
+        0
+      ]
+    },
+    {
+      "query_id": "REG_T1_0026",
+      "type": "type1",
+      "status": "FAIL",
+      "elapsed_s": 1.4,
+      "expected_answer": "Yes",
+      "actual_answer": "Uncertain",
+      "explanation": "LLM Type 1 call failed: Client error '400 Bad Request' for url 'https://velbertrack--exact2026-optionb-qwen25-vllm-server.modal.run/v1/chat/completions'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/400",
+      "premises_used": [
+        0
+      ]
+    },
+    {
+      "query_id": "REG_T1_0031",
+      "type": "type1",
+      "status": "FAIL",
+      "elapsed_s": 1.4,
+      "expected_answer": "B",
+      "actual_answer": "A",
+      "explanation": "LLM Type 1 call failed: Client error '400 Bad Request' for url 'https://velbertrack--exact2026-optionb-qwen25-vllm-server.modal.run/v1/chat/completions'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/400",
+      "premises_used": [
+        1,
+        4
+      ]
+    },
+    {
+      "query_id": "REG_T1_0032",
+      "type": "type1",
+      "status": "FAIL",
+      "elapsed_s": 1.5,
+      "expected_answer": "No",
+      "actual_answer": "Uncertain",
+      "explanation": "LLM Type 1 call failed: Client error '400 Bad Request' for url 'https://velbertrack--exact2026-optionb-qwen25-vllm-server.modal.run/v1/chat/completions'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/400",
+      "premises_used": [
+        1,
+        4
+      ]
+    },
+    {
+      "query_id": "REG_T1_0035",
+      "type": "type1",
+      "status": "FAIL",
+      "elapsed_s": 1.4,
+      "expected_answer": "D",
+      "actual_answer": "A",
+      "explanation": "LLM Type 1 call failed: Client error '400 Bad Request' for url 'https://velbertrack--exact2026-optionb-qwen25-vllm-server.modal.run/v1/chat/completions'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/400",
+      "premises_used": []
+    },
+    {
+      "query_id": "REG_T2_0001",
+      "type": "type2",
+      "status": "PASS",
+      "elapsed_s": 1.6,
+      "expected_answer": "3.38 × 10^-3",
+      "actual_answer": "3.38 × 10^-3",
+      "explanation": "Use E = 1/2 C U^2 after converting capacitance to farads when needed.",
+      "premises_used": []
+    },
+    {
+      "query_id": "REG_T2_0002",
+      "type": "type2",
+      "status": "PASS",
+      "elapsed_s": 1.0,
+      "expected_answer": "150",
+      "actual_answer": "150",
+      "explanation": "Use C = Q/U and report capacitance in microfarads.",
+      "premises_used": []
+    },
+    {
+      "query_id": "REG_T2_0003",
+      "type": "type2",
+      "status": "PASS",
+      "elapsed_s": 1.1,
+      "expected_answer": "1.5",
+      "actual_answer": "1.5",
+      "explanation": "Apply Coulomb's law F = k|q1 q2|/r^2.",
+      "premises_used": []
+    },
+    {
+      "query_id": "REG_T2_0004",
+      "type": "type2",
+      "status": "PASS",
+      "elapsed_s": 1.0,
+      "expected_answer": "7.20 × 10^3",
+      "actual_answer": "7.20 × 10^3",
+      "explanation": "At the midpoint, equal and opposite charges produce fields in the same direction, so the magnitudes add.",
+      "premises_used": []
+    },
+    {
+      "query_id": "REG_T2_0006",
+      "type": "type2",
+      "status": "PASS",
+      "elapsed_s": 1.1,
+      "expected_answer": "36",
+      "actual_answer": "36",
+      "explanation": "For series capacitors, both carry the same charge Q = C_eq V.",
+      "premises_used": []
+    },
+    {
+      "query_id": "REG_T2_0010",
+      "type": "type2",
+      "status": "PASS",
+      "elapsed_s": 1.1,
+      "expected_answer": "50.3",
+      "actual_answer": "50.3",
+      "explanation": "Use f = 1 / (2π√(LC)).",
+      "premises_used": []
+    },
+    {
+      "query_id": "REG_T2_0011",
+      "type": "type2",
+      "status": "PASS",
+      "elapsed_s": 1.1,
+      "expected_answer": "151",
+      "actual_answer": "151",
+      "explanation": "Use X_L = 2πfL and round to the nearest ohm.",
+      "premises_used": []
+    },
+    {
+      "query_id": "REG_T2_0012",
+      "type": "type2",
+      "status": "PASS",
+      "elapsed_s": 1.1,
+      "expected_answer": "1",
+      "actual_answer": "1",
+      "explanation": "Use d = v0 t + 1/2 a t^2.",
+      "premises_used": []
+    },
+    {
+      "query_id": "REG_T2_0015",
+      "type": "type2",
+      "status": "PASS",
+      "elapsed_s": 1.1,
+      "expected_answer": "7.07",
+      "actual_answer": "7.07",
+      "explanation": "Use work-energy: Fd = 1/2 m v^2.",
+      "premises_used": []
+    },
+    {
+      "query_id": "REG_T2_0017",
+      "type": "type2",
+      "status": "PASS",
+      "elapsed_s": 1.2,
+      "expected_answer": "3.15 × 10^4",
+      "actual_answer": "3.15 × 10^4",
+      "explanation": "Use Q = mcΔT.",
+      "premises_used": []
+    },
+    {
+      "query_id": "REG_T2_0018",
+      "type": "type2",
+      "status": "FAIL",
+      "elapsed_s": 7.5,
+      "expected_answer": "6.68 × 10^4",
+      "actual_answer": "66800.0",
+      "explanation": "Convert mass from kg to kg (already in kg). Multiply mass by latent heat of fusion to get heat energy in joules.",
+      "premises_used": []
+    },
+    {
+      "query_id": "REG_T2_0019",
+      "type": "type2",
+      "status": "PASS",
+      "elapsed_s": 1.1,
+      "expected_answer": "1.25 × 10^5",
+      "actual_answer": "1.25 × 10^5",
+      "explanation": "Use the ideal gas law P = nRT/V.",
+      "premises_used": []
+    },
+    {
+      "query_id": "REG_T2_0029",
+      "type": "type2",
+      "status": "PASS",
+      "elapsed_s": 1.1,
+      "expected_answer": "15",
+      "actual_answer": "15",
+      "explanation": "Use W = qU. With q in microcoulombs and U in volts, the result is in microjoules.",
+      "premises_used": []
+    },
+    {
+      "query_id": "REG_T2_0039",
+      "type": "type2",
+      "status": "PASS",
+      "elapsed_s": 1.1,
+      "expected_answer": "1",
+      "actual_answer": "1",
+      "explanation": "Use R = rho*l/S with the given consistent ohm·mm^2/m units.",
+      "premises_used": []
+    },
+    {
+      "query_id": "REG_T2_LD047",
+      "type": "type2",
+      "status": "PASS",
+      "elapsed_s": 1.1,
+      "expected_answer": "Directed toward q₂",
+      "actual_answer": "Directed toward q₂",
+      "explanation": "The attraction toward the larger-magnitude negative charge dominates, so the net force points toward q₂.",
+      "premises_used": []
+    },
+    {
+      "query_id": "REG_T2_TD374",
+      "type": "type2",
+      "status": "PASS",
+      "elapsed_s": 1.1,
+      "expected_answer": "0; 0",
+      "actual_answer": "0; 0",
+      "explanation": "After short-circuiting, the capacitor voltage drops to zero, so both stored charge and stored energy become zero.",
+      "premises_used": []
+    },
+    {
+      "query_id": "REG_T2_TD386",
+      "type": "type2",
+      "status": "PASS",
+      "elapsed_s": 1.1,
+      "expected_answer": "decreases by half",
+      "actual_answer": "decreases by half",
+      "explanation": "Capacitance is directly proportional to the dielectric constant, so halving ε halves C.",
+      "premises_used": []
+    },
+    {
+      "query_id": "REG_T2_GEN_022",
+      "type": "type2",
+      "status": "FAIL",
+      "elapsed_s": 8.8,
+      "expected_answer": "1",
+      "actual_answer": "0.9999999999999999",
+      "explanation": "Convert 50 uF to 5e-5 F, then apply E = 0.5 * C * V^2 with V=200 V.",
+      "premises_used": []
+    }
+  ]
+}

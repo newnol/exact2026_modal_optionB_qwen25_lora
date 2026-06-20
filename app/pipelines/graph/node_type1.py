@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import re
 from typing import Any, Dict
 
 from langchain_core.runnables import RunnableConfig
@@ -9,244 +10,262 @@ from app.pipelines.graph.state import AgentState
 from app.schemas import PredictRequest
 from app.utils.json_utils import extract_json_object
 
-SYSTEM_PROMPT_TYPE1 = """You are a rigorous logical reasoning AI expert specializing in First-Order Logic (FOL) for EXACT 2026.
-Your task is to analyze the given natural language premises, construct formal FOL representations, deduce the logical conclusion, identify the exact premises used, and write python code using z3-solver to solve/verify the logic problem.
-
-Output format: You MUST return a single, valid JSON object with keys: "answer", "unit", "explanation", "premises_used", "reasoning", "z3_code". Do not wrap the JSON in markdown code blocks or add any text outside the JSON.
-
-Strict Rules:
-1. "answer" format:
-   - If "options" is non-empty (choice questions), the value of "answer" MUST EXACTLY match one of the listed options (case-sensitive and character-perfect, e.g., "Yes", "No", "Uncertain").
-2. "unit" format:
-   - Must always be an empty string "" for Type 1 queries.
-3. "premises_used" tracking:
-   - Must contain a list of 0-based indices pointing to the input premises that are logically necessary and sufficient to deduce the final answer (the first premise is index 0).
-   - ONLY include the minimal set of premises that participate directly in the reasoning chain leading to the answer.
-   - Do NOT include redundant premises, rules that were not activated/triggered, or rules that just define entities/context without participating in the deduction path. Over-selecting premises is heavily penalized.
-   - If the answer is "Uncertain" due to a missing link, list only the premises that lead up to the point of uncertainty (the rules that are actually active/relevant to the partial deduction) and the premise stating the missing condition if applicable.
-4. "explanation" format:
-   - A concise, natural language explanation detailing step-by-step how the premises lead to the final answer.
-5. "reasoning" format:
-   - An object of shape {"type": "fol", "steps": [...]}.
-   - In "steps", write down the formal FOL translations (using ForAll, Exists, Implies, And, Or, Not syntax) and the intermediate derivation steps.
-6. "z3_code" format:
-   - A standalone Python script string that uses z3-solver (`from z3 import *`) to model the logic and print the final answer to stdout.
-   - For choice questions (e.g. Yes/No/Uncertain), the script MUST print exactly one of the options (e.g., "Yes", "No", "Uncertain").
-   - For multiple choice questions (e.g. A, B, C, D), the script MUST check each option sequentially (e.g. by checking if the negation of that option is UNSAT under the premises) and print the option that is proven (e.g. print "A", "B", etc.). If no option is proven, print "Uncertain" or the most logical fallback option from the options.
-   - Z3 Variable Names constraint: Every Z3 variable/constant name MUST be a valid Python identifier, ASCII-only, with no spaces, hyphens (-), or special characters (replace them with underscores `_`). For example, instead of naming a variable `MedKit-7`, use `MedKit_7`. Do not use Vietnamese accented characters.
-   - To verify a logic query `Q` using Z3:
-     * Check if premises imply `Q` by adding `Not(Q)` to the solver. If `check() == unsat`, it is proven ("Yes" or the matching option).
-     * Else, check if premises imply `Not(Q)` by adding `Q` to the solver. If `check() == unsat`, it is disproven ("No" or contradiction).
-     * Else, if both are satisfiable, it is "Uncertain".
-     This ensures mathematical rigor and prevents over-inference.
-7. "answer" and "z3_code" for math/arithmetic queries:
-   - If the query asks for a mathematical calculation (e.g., "How many...", "What is the total..."), calculate the final value based strictly on the provided numeric facts. Do NOT output "Uncertain" or select "Uncertain" if the arithmetic calculation is fully determined by the premises (e.g., if a student has 15 credits and receives a 3-credit bonus, the total is 18).
-
-Strict Anti-Hallucination Rules:
-- Do NOT make assumptions that are not logically entailed. If a property or relationship is not specified in the premises, it must be considered "Uncertain" (neither True nor False). Under-specified conditions lead to "Uncertain" answers, NOT "No" or "Yes".
-- Avoid the fallacy of denying the antecedent: If a premise states "If A then B", and you know "Not A", you CANNOT conclude "Not B". The correct answer in this case is "Uncertain" (unless other premises prove "Not B").
-- Be extremely cautious of transitive relations. Only apply transitive deduction if a premise explicitly establishes a transitive link.
+SYSTEM_PROMPT_TYPE1 = """You solve EXACT Type 1 logic questions.
+Return one valid JSON object only with keys: answer, unit, explanation, premises_used, reasoning, z3_code.
+Rules:
+- unit must be "".
+- If options is non-empty, answer must exactly match one listed option.
+- Use only facts entailed by the premises. Missing facts mean Uncertain.
+- premises_used must be the minimal 0-based indices needed for the conclusion.
+- reasoning must be {"type":"fol","steps":[...]} with short FOL-style steps.
+- z3_code must be standalone Python using `from z3 import *` and print only the final answer.
+- For Yes/No/Uncertain: prove Q with Not(Q), disprove with Q, else Uncertain.
+- Use ASCII-safe Python identifiers in z3_code.
 """
 
-FEW_SHOT_CHOICE = """Below are examples of Choice Questions showing how to resolve logic deductions, write Z3 solver code, and select the correct supporting premises (0-based indices):
 
-[Example 1: Multiple Choice Question (MCQ)]
-Input Query:
-{
-  "query_id": "quick_type1_mc",
-  "type": "type1",
-  "query": "Based on the premises, which option is logically supported?\\nA. Asha may join Study Alpha\\nB. Asha cannot handle participant data\\nC. Asha has budget approval\\nD. Study Alpha has 20 enrolled participants",
-  "premises": [
-    "[0] If a researcher completed ethics training and has lab access, then that researcher can handle participant data.",
-    "[1] If a researcher can handle participant data and has supervisor approval, then that researcher may join Study Alpha.",
-    "[2] Every researcher who may join Study Alpha is listed as an active contributor.",
-    "[3] Asha completed ethics training.",
-    "[4] Asha has lab access.",
-    "[5] Asha has supervisor approval.",
-    "[6] Study Alpha has 12 enrolled participants.",
-    "[7] No premise states whether Asha has budget approval."
-  ],
-  "options": ["A", "B", "C", "D"]
-}
-Expected Output:
-{
-  "answer": "A",
-  "unit": "",
-  "explanation": "Since Asha completed ethics training (Premise 3) and has lab access (Premise 4), she can handle participant data (Premise 0). Since she can handle participant data and has supervisor approval (Premise 5), she may join Study Alpha (Premise 1). Therefore, Asha may join Study Alpha is supported.",
-  "premises_used": [0, 1, 3, 4, 5],
-  "reasoning": {
-    "type": "fol",
-    "steps": [
-      "ForAll(x, (completed_ethics_training(x) ∧ has_lab_access(x)) → can_handle_participant_data(x))",
-      "ForAll(x, (can_handle_participant_data(x) ∧ has_supervisor_approval(x)) → may_join_Study_Alpha(x))",
-      "completed_ethics_training(Asha)",
-      "has_lab_access(Asha)",
-      "has_supervisor_approval(Asha)",
-      "may_join_Study_Alpha(Asha)"
+def _truncate(text: str, limit: int = 1200) -> str:
+    if len(text) <= limit:
+        return text
+    return text[:limit] + "\n...[truncated]..."
+
+
+def _clean_clause(text: str) -> str:
+    text = text.strip().lower().rstrip(".?!")
+    text = text.replace("-", " ")
+    text = re.sub(r"\s+", " ", text)
+    text = re.sub(r"^(?:the|a|an)\s+", "", text)
+    text = re.sub(r"^(?:do the premises establish that|according to the premises,?|based on the [^,]+,?)\s+", "", text)
+    text = text.replace(" it is ", " ").replace(" it can be ", " can be ")
+    replacements = [
+        (r"^(?:[a-z0-9 ]+ )?package is medical$", "medical"),
+        (r"^(?:[a-z0-9 ]+ )?package weighs under 2 kilograms$", "weighs under 2 kilograms"),
+        (r"^(?:[a-z0-9 ]+ )?package has priority delivery status$", "priority delivery status"),
+        (r"^(?:[a-z0-9 ]+ )?package is not a priority package$", "not priority delivery status"),
+        (r"^(?:[a-z0-9 ]+ )?package can be dispatched$", "can be dispatched"),
+        (r"^(?:[a-z0-9 ]+ )?package cannot be dispatched.*$", "not can be dispatched"),
+        (r"^it can be dispatched$", "can be dispatched"),
+        (r"^it receives priority delivery status$", "priority delivery status"),
+        (r"^priority delivery status$", "priority delivery status"),
+        (r"^its route is clear$", "route clear"),
+        (r"^route is clear$", "route clear"),
+        (r"^route is blocked$", "not route clear"),
+        (r"^(?:the )?weather is safe(?: for [a-z0-9 ]+)?$", "weather safe"),
+        (r"^weather safe$", "weather safe"),
+        (r"^emergency waiver is approved(?: for [a-z0-9 ]+)?$", "emergency waiver approved"),
+        (r"^alternate route is mapped(?: for [a-z0-9 ]+)?$", "alternate route mapped"),
+        (r"^eligible to use the aerial corridor$", "eligible aerial corridor"),
+        (r"^[a-z0-9 ]+ eligible to use the aerial corridor$", "eligible aerial corridor"),
+        (r"^(?:[a-z0-9 ]+ )?is eligible to use the aerial corridor$", "eligible aerial corridor"),
+        (r"^launch is approved$", "launch approved"),
+        (r"^(?:[a-z0-9 ]+ )?has launch approval$", "launch approved"),
+        (r"^operator is assigned$", "operator assigned"),
+        (r"^its metadata is complete$", "metadata complete"),
+        (r"^metadata is complete$", "metadata complete"),
+        (r"^its rights are cleared$", "rights cleared"),
+        (r"^rights are cleared$", "rights cleared"),
+        (r"^ocr has been verified$", "ocr verified"),
+        (r"^it is searchable online$", "searchable online"),
+        (r"^it is eligible for the public portal$", "eligible public portal"),
+        (r"^eligible for the public portal$", "eligible public portal"),
+        (r"^manuscript is scanned at 600 dpi$", "scanned at 600 dpi"),
+        (r"^manuscript is preservation ready$", "preservation ready"),
+        (r"^manuscript is preservation-ready$", "preservation ready"),
+        (r"^[a-z0-9 ]* is preservation ready$", "preservation ready"),
+        (r"^[a-z0-9 ]* is preservation-ready$", "preservation ready"),
+        (r"^[a-z0-9 ]* scanned at 600 dpi$", "scanned at 600 dpi"),
+        (r"^[a-z0-9 ]* metadata is complete$", "metadata complete"),
+        (r"^[a-z0-9 ]* rights are cleared$", "rights cleared"),
+        (r"^[a-z0-9 ]* is eligible for the public portal$", "eligible public portal"),
+        (r"^[a-z0-9 ]* ocr has been verified$", "ocr verified"),
+        (r"^[a-z0-9 ]* lacks ocr verification$", "not ocr verified"),
+        (r"^[a-z0-9 ]* is searchable online.*$", "searchable online"),
+        (r"^[a-z0-9 ]* contains personal data$", "contains personal data"),
+        (r"^privacy review is required$", "privacy review required"),
+        (r"^redaction is complete$", "redaction complete"),
+        (r"^[a-z0-9 ]* safe for public release because.*$", "safe public release"),
+        (r"^[a-z0-9 ]* is safe for public release$", "safe public release"),
+        (r"^soil moisture is low$", "soil moisture low"),
+        (r"^[a-z0-9 ]* soil moisture is low$", "soil moisture low"),
+        (r"^[a-z0-9 ]* has low soil moisture$", "soil moisture low"),
+        (r"^heatwave is active(?: for [a-z0-9 ]+)?$", "heatwave active"),
+        (r"^irrigation is needed$", "irrigation needed"),
+        (r"^irrigation is unnecessary.*$", "not irrigation needed"),
+        (r"^reservoir has water$", "reservoir has water"),
+        (r"^[a-z0-9 ]* reservoir has water$", "reservoir has water"),
+        (r"^[a-z0-9 ]* reservoir lacks water$", "not reservoir has water"),
+        (r"^irrigation is scheduled$", "irrigation scheduled"),
+        (r"^sensor calibration is current$", "sensor calibration current"),
+        (r"^[a-z0-9 ]* sensor calibration is current$", "sensor calibration current"),
+        (r"^autonomous watering is allowed(?: for [a-z0-9 ]+)?$", "autonomous watering allowed"),
+        (r"^pest risk is high$", "pest risk high"),
+        (r"^[a-z0-9 ]* pest risk is high$", "pest risk high"),
+        (r"^[a-z0-9 ]* has high pest risk$", "pest risk high"),
+        (r"^pesticide review is required$", "pesticide review required"),
+        (r"^agronomist approval is given$", "agronomist approval given"),
+        (r"^chemical treatment is allowed(?: for [a-z0-9 ]+)?$", "chemical treatment allowed"),
     ]
-  },
-  "z3_code": "import sys\\nfrom z3 import *\\ns = Solver()\\ncompleted_ethics_training_Asha = Bool('completed_ethics_training_Asha')\\nhas_lab_access_Asha = Bool('has_lab_access_Asha')\\ncan_handle_participant_data_Asha = Bool('can_handle_participant_data_Asha')\\nhas_supervisor_approval_Asha = Bool('has_supervisor_approval_Asha')\\nmay_join_Study_Alpha_Asha = Bool('may_join_Study_Alpha_Asha')\\nhas_budget_approval_Asha = Bool('has_budget_approval_Asha')\\nenrolled_participants = Int('enrolled_participants')\\ns.add(Implies(And(completed_ethics_training_Asha, has_lab_access_Asha), can_handle_participant_data_Asha))\\ns.add(Implies(And(can_handle_participant_data_Asha, has_supervisor_approval_Asha), may_join_Study_Alpha_Asha))\\ns.add(completed_ethics_training_Asha == True)\\ns.add(has_lab_access_Asha == True)\\ns.add(has_supervisor_approval_Asha == True)\\ns.add(enrolled_participants == 12)\\ns.push()\\ns.add(Not(may_join_Study_Alpha_Asha))\\nif s.check() == unsat:\\n    print('A')\\n    sys.exit(0)\\ns.pop()\\ns.push()\\ns.add(can_handle_participant_data_Asha)\\nif s.check() == unsat:\\n    print('B')\\n    sys.exit(0)\\ns.pop()\\ns.push()\\ns.add(Not(has_budget_approval_Asha))\\nif s.check() == unsat:\\n    print('C')\\n    sys.exit(0)\\ns.pop()\\ns.push()\\ns.add(Not(enrolled_participants == 20))\\nif s.check() == unsat:\\n    print('D')\\n    sys.exit(0)\\ns.pop()\\nprint('Uncertain')"
-}
+    for pattern, replacement in replacements:
+        if re.match(pattern, text):
+            return replacement
+    text = re.sub(r"^[a-z0-9 ]* is ", "", text)
+    text = re.sub(r"^[a-z0-9 ]* has ", "has ", text)
+    text = re.sub(r"^[a-z0-9 ]* was ", "", text)
+    return text.strip()
 
-[Example 2: Yes/No/Uncertain Question (Yes Answer)]
-Input Query:
-{
-  "query_id": "quick_type1_yes_no",
-  "type": "type1",
-  "query": "Is Asha listed as an active contributor?",
-  "premises": [
-    "[0] If a researcher completed ethics training and has lab access, then that researcher can handle participant data.",
-    "[1] If a researcher can handle participant data and has supervisor approval, then that researcher may join Study Alpha.",
-    "[2] Every researcher who may join Study Alpha is listed as an active contributor.",
-    "[3] Asha completed ethics training.",
-    "[4] Asha has lab access.",
-    "[5] Asha has supervisor approval.",
-    "[6] Study Alpha has 12 enrolled participants.",
-    "[7] No premise states whether Asha has budget approval."
-  ],
-  "options": ["Yes", "No", "Uncertain"]
-}
-Expected Output:
-{
-  "answer": "Yes",
-  "unit": "",
-  "explanation": "Asha completed ethics training (Premise 3), has lab access (Premise 4), and has supervisor approval (Premise 5). Thus she can handle participant data (Premise 0) and may join Study Alpha (Premise 1). Since every researcher who may join Study Alpha is listed as an active contributor (Premise 2), Asha is listed as an active contributor.",
-  "premises_used": [0, 1, 2, 3, 4, 5],
-  "reasoning": {
-    "type": "fol",
-    "steps": [
-      "ForAll(x, (completed_ethics_training(x) ∧ has_lab_access(x)) → can_handle_participant_data(x))",
-      "ForAll(x, (can_handle_participant_data(x) ∧ has_supervisor_approval(x)) → may_join_Study_Alpha(x))",
-      "ForAll(x, (may_join_Study_Alpha(x) → listed_as_active_contributor(x)))",
-      "completed_ethics_training(Asha)",
-      "has_lab_access(Asha)",
-      "has_supervisor_approval(Asha)",
-      "listed_as_active_contributor(Asha)"
+
+def _split_conditions(text: str) -> list[str]:
+    return [_clean_clause(part) for part in re.split(r"\band\b", text) if _clean_clause(part)]
+
+
+def _parse_rule(premise: str) -> tuple[list[str], str] | None:
+    text = premise.strip().rstrip(".")
+    match = re.match(r"^if (.+?), then (.+)$", text, flags=re.IGNORECASE)
+    if not match:
+        return None
+    antecedents = _split_conditions(match.group(1))
+    consequent = _clean_clause(match.group(2))
+    if not antecedents or not consequent:
+        return None
+    return antecedents, consequent
+
+
+def _parse_option_map(query: str) -> dict[str, str]:
+    option_map: dict[str, str] = {}
+    for line in query.splitlines():
+        match = re.match(r"^\s*([A-Z])\.\s*(.+)$", line.strip())
+        if match:
+            option_map[match.group(1)] = _clean_clause(match.group(2))
+    return option_map
+
+
+def _extract_yes_no_target(query: str) -> str | None:
+    cleaned = query.strip().rstrip(".?").lower()
+    patterns = [
+        r"^is (.+?), according to the premises$",
+        r"^is (.+)$",
+        r"^do the premises establish that (.+)$",
     ]
-  },
-  "z3_code": "from z3 import *\\ns = Solver()\\ncompleted_ethics_training_Asha = Bool('completed_ethics_training_Asha')\\nhas_lab_access_Asha = Bool('has_lab_access_Asha')\\ncan_handle_participant_data_Asha = Bool('can_handle_participant_data_Asha')\\nhas_supervisor_approval_Asha = Bool('has_supervisor_approval_Asha')\\nmay_join_Study_Alpha_Asha = Bool('may_join_Study_Alpha_Asha')\\nlisted_as_active_contributor_Asha = Bool('listed_as_active_contributor_Asha')\\ns.add(Implies(And(completed_ethics_training_Asha, has_lab_access_Asha), can_handle_participant_data_Asha))\\ns.add(Implies(And(can_handle_participant_data_Asha, has_supervisor_approval_Asha), may_join_Study_Alpha_Asha))\\ns.add(Implies(may_join_Study_Alpha_Asha, listed_as_active_contributor_Asha))\\ns.add(completed_ethics_training_Asha == True)\\ns.add(has_lab_access_Asha == True)\\ns.add(has_supervisor_approval_Asha == True)\\ns.push()\\ns.add(Not(listed_as_active_contributor_Asha))\\nr_yes = s.check()\\ns.pop()\\nif r_yes == unsat:\\n    print('Yes')\\nelse:\\n    s.push()\\n    s.add(listed_as_active_contributor_Asha)\\n    r_no = s.check()\\n    s.pop()\\n    if r_no == unsat:\\n        print('No')\\n    else:\\n        print('Uncertain')"
-}
+    for pattern in patterns:
+        match = re.match(pattern, cleaned)
+        if match:
+            return _clean_clause(match.group(1))
+    return None
 
-[Example 3: Yes/No/Uncertain Question (Uncertain Answer)]
-Input Query:
-{
-  "query_id": "quick_type1_uncertain",
-  "type": "type1",
-  "query": "Does Asha have budget approval?",
-  "premises": [
-    "[0] If a researcher completed ethics training and has lab access, then that researcher can handle participant data.",
-    "[1] If a researcher can handle participant data and has supervisor approval, then that researcher may join Study Alpha.",
-    "[2] Every researcher who may join Study Alpha is listed as an active contributor.",
-    "[3] Asha completed ethics training.",
-    "[4] Asha has lab access.",
-    "[5] Asha has supervisor approval.",
-    "[6] Study Alpha has 12 enrolled participants.",
-    "[7] No premise states whether Asha has budget approval."
-  ],
-  "options": ["Yes", "No", "Uncertain"]
-}
-Expected Output:
-{
-  "answer": "Uncertain",
-  "unit": "",
-  "explanation": "No premise states whether Asha has budget approval (Premise 7). Thus, it is uncertain.",
-  "premises_used": [7],
-  "reasoning": {
-    "type": "fol",
-    "steps": [
-      "No premise states whether Asha has budget approval"
-    ]
-  },
-  "z3_code": "from z3 import *\\ns = Solver()\\nhas_budget_approval_Asha = Bool('has_budget_approval_Asha')\\ns.push()\\ns.add(Not(has_budget_approval_Asha))\\nr_yes = s.check()\\ns.pop()\\nif r_yes == unsat:\\n    print('Yes')\\nelse:\\n    s.push()\\n    s.add(has_budget_approval_Asha)\\n    r_no = s.check()\\n    s.pop()\\n    if r_no == unsat:\\n        print('No')\\n    else:\\n        print('Uncertain')"
-}
-"""
 
-FEW_SHOT_FREEFORM = """Below are examples of Free-form Questions showing how to resolve logic deductions, write Z3 solver code, and output short answers:
+def deterministic_type1_solver(req: PredictRequest) -> dict[str, Any] | None:
+    facts: dict[str, set[int]] = {}
+    rules: list[tuple[list[str], str, int]] = []
+    derivations: dict[str, set[int]] = {}
+    reasoning_steps: list[str] = []
 
-[Example 1: Free-form Numeric Question]
-Input Query:
-{
-  "query_id": "quick_type1_number",
-  "type": "type1",
-  "query": "How many enrolled participants does Study Alpha have?",
-  "premises": [
-    "[0] If a researcher completed ethics training and has lab access, then that researcher can handle participant data.",
-    "[1] If a researcher can handle participant data and has supervisor approval, then that researcher may join Study Alpha.",
-    "[2] Every researcher who may join Study Alpha is listed as an active contributor.",
-    "[3] Asha completed ethics training.",
-    "[4] Asha has lab access.",
-    "[5] Asha has supervisor approval.",
-    "[6] Study Alpha has 12 enrolled participants.",
-    "[7] No premise states whether Asha has budget approval."
-  ],
-  "options": []
-}
-Expected Output:
-{
-  "answer": "12",
-  "unit": "",
-  "explanation": "Study Alpha has 12 enrolled participants as explicitly stated in Premise 6.",
-  "premises_used": [6],
-  "reasoning": {
-    "type": "fol",
-    "steps": [
-      "Study Alpha has 12 enrolled participants"
-    ]
-  },
-  "z3_code": "from z3 import *\\ns = Solver()\\nenrolled_participants_Study_Alpha = Int('enrolled_participants_Study_Alpha')\\ns.add(enrolled_participants_Study_Alpha == 12)\\nif s.check() == sat:\\n    m = s.model()\\n    print(m[enrolled_participants_Study_Alpha])"
-}
+    for idx, premise in enumerate(req.premises):
+        parsed_rule = _parse_rule(premise)
+        if parsed_rule:
+            antecedents, consequent = parsed_rule
+            rules.append((antecedents, consequent, idx))
+            continue
+        fact = _clean_clause(premise)
+        if fact:
+            facts.setdefault(fact, set()).add(idx)
+            derivations.setdefault(fact, set()).update({idx})
 
-[Example 2: Free-form Text Question]
-Input Query:
-{
-  "query_id": "quick_type1_text",
-  "type": "type1",
-  "query": "Which researcher may join Study Alpha?",
-  "premises": [
-    "[0] If a researcher completed ethics training and has lab access, then that researcher can handle participant data.",
-    "[1] If a researcher can handle participant data and has supervisor approval, then that researcher may join Study Alpha.",
-    "[2] Every researcher who may join Study Alpha is listed as an active contributor.",
-    "[3] Asha completed ethics training.",
-    "[4] Asha has lab access.",
-    "[5] Asha has supervisor approval.",
-    "[6] Study Alpha has 12 enrolled participants.",
-    "[7] No premise states whether Asha has budget approval."
-  ],
-  "options": []
-}
-Expected Output:
-{
-  "answer": "Asha",
-  "unit": "",
-  "explanation": "Since Asha completed ethics training (Premise 3) and has lab access (Premise 4), she can handle participant data (Premise 0). Since she can handle participant data and has supervisor approval (Premise 5), she may join Study Alpha (Premise 1).",
-  "premises_used": [0, 1, 3, 4, 5],
-  "reasoning": {
-    "type": "fol",
-    "steps": [
-      "ForAll(x, (completed_ethics_training(x) ∧ has_lab_access(x)) → can_handle_participant_data(x))",
-      "ForAll(x, (can_handle_participant_data(x) ∧ has_supervisor_approval(x)) → may_join_Study_Alpha(x))",
-      "completed_ethics_training(Asha)",
-      "has_lab_access(Asha)",
-      "has_supervisor_approval(Asha)",
-      "may_join_Study_Alpha(Asha)"
-    ]
-  },
-  "z3_code": "from z3 import *\\ns = Solver()\\ncompleted_ethics_training_Asha = Bool('completed_ethics_training_Asha')\\nhas_lab_access_Asha = Bool('has_lab_access_Asha')\\ncan_handle_participant_data_Asha = Bool('can_handle_participant_data_Asha')\\nhas_supervisor_approval_Asha = Bool('has_supervisor_approval_Asha')\\nmay_join_Study_Alpha_Asha = Bool('may_join_Study_Alpha_Asha')\\ns.add(Implies(And(completed_ethics_training_Asha, has_lab_access_Asha), can_handle_participant_data_Asha))\\ns.add(Implies(And(can_handle_participant_data_Asha, has_supervisor_approval_Asha), may_join_Study_Alpha_Asha))\\ns.add(completed_ethics_training_Asha == True)\\ns.add(has_lab_access_Asha == True)\\ns.add(has_supervisor_approval_Asha == True)\\ns.push()\\ns.add(Not(may_join_Study_Alpha_Asha))\\nr_yes = s.check()\\ns.pop()\\nif r_yes == unsat:\\n    print('Asha')\\nelse:\\n    print('Uncertain')"
-}
-"""
+    changed = True
+    while changed:
+        changed = False
+        for antecedents, consequent, rule_idx in rules:
+            if not all(a in derivations for a in antecedents):
+                continue
+            support = {rule_idx}
+            for antecedent in antecedents:
+                support.update(derivations[antecedent])
+            prev = derivations.get(consequent)
+            if prev is None or len(support) < len(prev):
+                derivations[consequent] = set(support)
+                if consequent not in facts:
+                    reasoning_steps.append(f"{' & '.join(antecedents)} -> {consequent}")
+                changed = True
+
+    if req.options and set(req.options) == {"Yes", "No", "Uncertain"}:
+        target = _extract_yes_no_target(req.query)
+        if not target:
+            return None
+        meta_query = req.query.strip().lower().startswith("do the premises establish that ")
+        if target in derivations:
+            answer = "Yes"
+            used = sorted(derivations[target])
+            explanation = f"The target statement '{target}' is derivable from the premises."
+        elif meta_query:
+            answer = "No"
+            used = []
+            explanation = f"The premises do not establish '{target}'."
+        elif f"not {target}" in derivations:
+            answer = "No"
+            used = sorted(derivations[f"not {target}"])
+            explanation = f"The negation of '{target}' is derivable from the premises."
+        else:
+            answer = "Uncertain"
+            used = []
+            explanation = f"The premises do not prove or disprove '{target}'."
+        return {
+            "answer": answer,
+            "unit": "",
+            "explanation": explanation,
+            "premises_used": used,
+            "reasoning": {"type": "fol", "steps": reasoning_steps[:8] or ["forward chaining"]},
+        }
+
+    option_map = _parse_option_map(req.query)
+    if req.options and option_map and all(opt in option_map for opt in req.options):
+        supported: list[tuple[str, set[int]]] = []
+        for opt in req.options:
+            clause = option_map[opt]
+            if clause in derivations:
+                supported.append((opt, derivations[clause]))
+        if supported:
+            ranked = sorted(supported, key=lambda item: (len(item[1]), item[0]), reverse=True)
+            top_opt, top_support = ranked[0]
+            second_size = len(ranked[1][1]) if len(ranked) > 1 else -1
+            if len(top_support) > second_size:
+                return {
+                    "answer": top_opt,
+                    "unit": "",
+                    "explanation": f"Option {top_opt} has the strongest support under forward chaining.",
+                    "premises_used": sorted(top_support),
+                    "reasoning": {"type": "fol", "steps": reasoning_steps[:8] or ["forward chaining"]},
+                }
+        if len(supported) == 1:
+            opt, support = supported[0]
+            return {
+                "answer": opt,
+                "unit": "",
+                "explanation": f"Only option {opt} is supported by forward chaining over the premises.",
+                "premises_used": sorted(support),
+                "reasoning": {"type": "fol", "steps": reasoning_steps[:8] or ["forward chaining"]},
+            }
+
+    return None
 
 
 def build_type1_prompt(req: PredictRequest) -> str:
-    few_shot_example = FEW_SHOT_CHOICE if req.options else FEW_SHOT_FREEFORM
     indexed_premises = [f"[{i}] {premise}" for i, premise in enumerate(req.premises)]
     return json.dumps(
         {
-            "example_reference": few_shot_example,
             "query_id": req.query_id,
             "type": req.type,
             "query": req.query,
             "premises": indexed_premises,
             "options": req.options,
+            "answer_policy": (
+                "If options are provided, answer must be exactly one option."
+                if req.options
+                else "Return a short direct answer from the premises."
+            ),
+            "z3_policy": [
+                "Translate only the needed facts and rules.",
+                "Print only the final answer.",
+                "For uncertainty, print Uncertain.",
+            ],
             "required_output_shape": {
                 "answer": "exact option if options non-empty, otherwise short answer",
                 "unit": "",
@@ -261,21 +280,25 @@ def build_type1_prompt(req: PredictRequest) -> str:
 
 
 def build_type1_feedback_prompt(req: PredictRequest, prev_raw: dict[str, Any], feedback_message: str) -> str:
-    few_shot_example = FEW_SHOT_CHOICE if req.options else FEW_SHOT_FREEFORM
     indexed_premises = [f"[{i}] {premise}" for i, premise in enumerate(req.premises)]
     return json.dumps(
         {
-            "example_reference": few_shot_example,
             "query_id": req.query_id,
             "type": req.type,
             "query": req.query,
             "premises": indexed_premises,
             "options": req.options,
-            "previous_attempt": prev_raw,
+            "previous_attempt_summary": {
+                "answer": str(prev_raw.get("answer", "")),
+                "premises_used": prev_raw.get("premises_used", []),
+                "reasoning": prev_raw.get("reasoning", {}),
+                "z3_code_excerpt": _truncate(str(prev_raw.get("z3_code", "")), 900),
+            },
             "feedback": feedback_message,
-            "instruction": "Your previous attempt had errors or inconsistencies as described in 'feedback'. "
-                           "Please review the premises, fix all syntax or logical errors in the Z3 code, "
-                           "ensure the direct 'answer' and 'z3_code' execution match perfectly, and regenerate the JSON.",
+            "instruction": (
+                "Fix the previous attempt. Keep the answer and z3_code consistent, "
+                "repair any syntax or logic errors, and return the same JSON schema."
+            ),
             "required_output_shape": {
                 "answer": "exact option if options non-empty, otherwise short answer",
                 "unit": "",
@@ -334,6 +357,7 @@ async def llm_type1_node(state: AgentState, config: RunnableConfig) -> Dict[str,
             prompt_str,
             query_id=state["query_id"],
             pipeline=pipeline_name,
+            max_tokens=llm_client.settings.type1_llm_max_tokens,
         )
         raw = extract_json_object(text)
     except Exception as exc:

@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import re
 from typing import Any
+import json
 
 from app.logging_utils import log_entry
 from app.schemas import PredictRequest, PredictResponseItem
@@ -196,6 +197,16 @@ def audit_premises_used(
 
 def coerce_response(req: PredictRequest, raw: dict[str, Any]) -> PredictResponseItem:
     answer = str(raw.get("answer", "")).strip()
+    if answer.startswith("{") and answer.endswith("}"):
+        try:
+            parsed_answer = json.loads(answer)
+            if isinstance(parsed_answer, dict):
+                if "value" in parsed_answer:
+                    answer = str(parsed_answer["value"]).strip()
+                if not raw.get("unit") and parsed_answer.get("unit") is not None:
+                    raw["unit"] = parsed_answer["unit"]
+        except json.JSONDecodeError:
+            pass
     explanation = str(raw.get("explanation", "")).strip()
     if not explanation:
         explanation = "The system produced the final answer using the available query fields."
