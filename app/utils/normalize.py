@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import re
+from math import log10, floor
 from typing import Any
 
 from app.logging_utils import log_entry
@@ -249,6 +250,17 @@ def coerce_response(req: PredictRequest, raw: dict[str, Any]) -> PredictResponse
     )
 
 
+def round_sig(x: float, sig: int = 4) -> float:
+    if x == 0:
+        return 0.0
+    try:
+        if x != x or x == float('inf') or x == float('-inf'):
+            return x
+        return round(x, sig - int(floor(log10(abs(x)))) - 1)
+    except Exception:
+        return x
+
+
 def _process_single_type2_value(val_str: str, unit: str, query: str) -> tuple[str, str]:
     # Try parsing as float
     numeric_val = None
@@ -259,86 +271,32 @@ def _process_single_type2_value(val_str: str, unit: str, query: str) -> tuple[st
     except ValueError:
         return val_str, unit
 
-    # 3. Unit Conversion & Scaling from SI units to target units
-    q_lower = query.lower()
-    has_micro = any(x in q_lower for x in ["micro", "μ", "\u03bc", "u"])
-    has_milli = any(x in q_lower for x in ["milli", "m"])
-    has_nano = any(x in q_lower for x in ["nano", "n"])
-    has_pico = any(x in q_lower for x in ["pico", "p"])
-
-    # Determine implied quantity from query
-    inferred_qty = None
-    if "capacit" in q_lower or "capacitor" in q_lower:
-        inferred_qty = "capacitance"
-    elif "charge" in q_lower:
-        inferred_qty = "charge"
-    elif "current" in q_lower:
-        inferred_qty = "current"
-    elif "energy" in q_lower or "work" in q_lower or "heat" in q_lower:
-        inferred_qty = "energy"
-
+    # 3. Math-based cleaning: Keep original unit, only clean whitespace
     target_unit = unit
 
-    if target_unit == "F" or (not target_unit and inferred_qty == "capacitance"):
-        # standard capacitance is in uF, nF, or pF
-        if numeric_val < 1e-9:
-            numeric_val *= 1e12
-            target_unit = "pF"
-        elif numeric_val < 1e-6:
-            numeric_val *= 1e9
-            target_unit = "nF"
-        elif numeric_val < 1.0:
-            numeric_val *= 1e6
-            target_unit = "uF"
-    elif target_unit == "C" or (not target_unit and inferred_qty == "charge"):
-        if numeric_val < 1e-9:
-            numeric_val *= 1e12
-            target_unit = "pC"
-        elif numeric_val < 1e-6:
-            numeric_val *= 1e9
-            target_unit = "nC"
-        elif numeric_val < 1e-3:
-            numeric_val *= 1e6
-            target_unit = "uC"
-        elif numeric_val < 1.0:
-            numeric_val *= 1e3
-            target_unit = "mC"
-    elif target_unit == "J" or (not target_unit and inferred_qty == "energy"):
-        if "uj" in q_lower or "microjoule" in q_lower or (has_micro and numeric_val < 1e-3):
-            numeric_val *= 1e6
-            target_unit = "uJ"
-        elif "mj" in q_lower or "millijoule" in q_lower or (has_milli and numeric_val < 1.0):
-            numeric_val *= 1e3
-            target_unit = "mJ"
-    elif target_unit == "A" or (not target_unit and inferred_qty == "current"):
-        if "ma" in q_lower or "milliampere" in q_lower or (has_milli and numeric_val < 1.0):
-            numeric_val *= 1e3
-            target_unit = "mA"
-        elif "ua" in q_lower or "microampere" in q_lower or (has_micro and numeric_val < 1e-3):
-            numeric_val *= 1e6
-            target_unit = "uA"
-
     # 4. Rounding and Formatting
-    # Round to 6 decimal places to remove precision noise
-    rounded = round(numeric_val, 6)
+    # Round to 4 significant figures to match physics textbook precision
+    rounded = round_sig(numeric_val, 4)
     
     # Format whole numbers as integers
     if rounded.is_integer():
         formatted_ans = str(int(rounded))
     else:
         abs_val = abs(rounded)
-        if abs_val < 0.01 or abs_val >= 5000:
-            # format as scientific notation with 2 decimal places (3 sig figs)
-            s_notation = f"{rounded:.2e}"
-            match = re.match(r"(-?\d+\.\d+)e([+-]\d+)", s_notation)
-            if match:
-                coeff = match.group(1)
-                exp = int(match.group(2))
-                formatted_ans = f"{coeff} × 10^{exp}"
-            else:
-                formatted_ans = str(rounded)
+        if abs_val < 0.0001:
+            # format as scientific notation with 'e' (e.g. 3.24e-05)
+            # using .3e to allow up to 4 significant figures, then stripping trailing zeros in significand
+            formatted_ans = f"{rounded:.3e}"
+            if "e" in formatted_ans:
+                significand, exponent = formatted_ans.split("e", 1)
+                if "." in significand:
+                    significand = significand.rstrip("0").rstrip(".")
+                formatted_ans = f"{significand}e{exponent}"
+            # strip unneeded + in exponent: e.g., 3.24e+05 -> 3.24e05
+            formatted_ans = formatted_ans.replace("e+", "e")
         else:
-            formatted_ans = f"{rounded:.2f}".rstrip("0").rstrip(".")
+            # format as standard decimal, stripping trailing zeros
+            formatted_ans = f"{rounded:.6f}".rstrip("0").rstrip(".")
 
     return formatted_ans, target_unit
 

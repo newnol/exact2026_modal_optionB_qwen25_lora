@@ -32,15 +32,16 @@ Strict Rules:
 6. "z3_code" format:
    - A standalone Python script string that uses z3-solver (`from z3 import *`) to model the logic and print the final answer to stdout.
    - For choice questions (e.g. Yes/No/Uncertain), the script MUST print exactly one of the options (e.g., "Yes", "No", "Uncertain").
-   - For multiple choice questions (e.g. A, B, C, D), the script MUST check each option sequentially (e.g. by checking if the negation of that option is UNSAT under the premises) and print the option that is proven (e.g. print "A", "B", etc.). If no option is proven, print "Uncertain" or the most logical fallback option from the options.
-   - Z3 Variable Names constraint: Every Z3 variable/constant name MUST be a valid Python identifier, ASCII-only, with no spaces, hyphens (-), or special characters (replace them with underscores `_`). For example, instead of naming a variable `MedKit-7`, use `MedKit_7`. Do not use Vietnamese accented characters.
+   - Z3 Variable Names constraint: Every Z3 variable/constant name MUST be a valid Python identifier, ASCII-only, with no spaces, hyphens (-), or special characters (replace them with underscores `_`).
+   - Strict Closed-World Assumption (CWA) Modeling: A factual premise is only true if explicitly stated in the premises. If a fact or condition (e.g. `logs_reviewed`, `passes_linting`) is NOT explicitly stated as a fact in the premises, it is UNKNOWN (neither True nor False). In the Z3 code, you must DECLARE the corresponding Bool variable (e.g., `logs_reviewed = Bool('logs_reviewed')`) but you MUST NOT add any constraints on its value (do NOT call `s.add(logs_reviewed == True)` or `s.add(logs_reviewed == False)`). This allows Z3 to correctly yield unsatisfiable for negations only when it is actually proven under the given facts, returning 'Uncertain' otherwise.
    - To verify a logic query `Q` using Z3:
      * Check if premises imply `Q` by adding `Not(Q)` to the solver. If `check() == unsat`, it is proven ("Yes" or the matching option).
      * Else, check if premises imply `Not(Q)` by adding `Q` to the solver. If `check() == unsat`, it is disproven ("No" or contradiction).
      * Else, if both are satisfiable, it is "Uncertain".
      This ensures mathematical rigor and prevents over-inference.
+   - For multiple choice questions (e.g. A, B, C, D), the script MUST check each option sequentially (e.g. by adding `Not(Option)` inside a push/pop block and checking if it is UNSAT) and print the option letter that is proven (e.g., print "A", "B", etc.). If no option is proven, print "Uncertain" or the default fallback option from the options.
 7. "answer" and "z3_code" for math/arithmetic queries:
-   - If the query asks for a mathematical calculation (e.g., "How many...", "What is the total..."), calculate the final value based strictly on the provided numeric facts. Do NOT output "Uncertain" or select "Uncertain" if the arithmetic calculation is fully determined by the premises (e.g., if a student has 15 credits and receives a 3-credit bonus, the total is 18).
+   - If the query asks for a mathematical calculation (e.g., "How many...", "What is the total..."), calculate the final value based strictly on the provided numeric facts. Do NOT output "Uncertain" or select "Uncertain" if the arithmetic calculation is fully determined by the premises.
 
 Strict Anti-Hallucination Rules:
 - Do NOT make assumptions that are not logically entailed. If a property or relationship is not specified in the premises, it must be considered "Uncertain" (neither True nor False). Under-specified conditions lead to "Uncertain" answers, NOT "No" or "Yes".
@@ -127,21 +128,18 @@ Expected Output:
   "z3_code": "from z3 import *\\ns = Solver()\\ncompleted_ethics_training_Asha = Bool('completed_ethics_training_Asha')\\nhas_lab_access_Asha = Bool('has_lab_access_Asha')\\ncan_handle_participant_data_Asha = Bool('can_handle_participant_data_Asha')\\nhas_supervisor_approval_Asha = Bool('has_supervisor_approval_Asha')\\nmay_join_Study_Alpha_Asha = Bool('may_join_Study_Alpha_Asha')\\nlisted_as_active_contributor_Asha = Bool('listed_as_active_contributor_Asha')\\ns.add(Implies(And(completed_ethics_training_Asha, has_lab_access_Asha), can_handle_participant_data_Asha))\\ns.add(Implies(And(can_handle_participant_data_Asha, has_supervisor_approval_Asha), may_join_Study_Alpha_Asha))\\ns.add(Implies(may_join_Study_Alpha_Asha, listed_as_active_contributor_Asha))\\ns.add(completed_ethics_training_Asha == True)\\ns.add(has_lab_access_Asha == True)\\ns.add(has_supervisor_approval_Asha == True)\\ns.push()\\ns.add(Not(listed_as_active_contributor_Asha))\\nr_yes = s.check()\\ns.pop()\\nif r_yes == unsat:\\n    print('Yes')\\nelse:\\n    s.push()\\n    s.add(listed_as_active_contributor_Asha)\\n    r_no = s.check()\\n    s.pop()\\n    if r_no == unsat:\\n        print('No')\\n    else:\\n        print('Uncertain')"
 }
 
-[Example 3: Yes/No/Uncertain Question (Uncertain Answer)]
+[Example 3: Yes/No/Uncertain Question (Uncertain due to Missing Fact)]
 Input Query:
 {
-  "query_id": "quick_type1_uncertain",
+  "query_id": "quick_type1_missing_fact",
   "type": "type1",
-  "query": "Does Asha have budget approval?",
+  "query": "Is Asha listed as an active contributor?",
   "premises": [
     "[0] If a researcher completed ethics training and has lab access, then that researcher can handle participant data.",
     "[1] If a researcher can handle participant data and has supervisor approval, then that researcher may join Study Alpha.",
     "[2] Every researcher who may join Study Alpha is listed as an active contributor.",
     "[3] Asha completed ethics training.",
-    "[4] Asha has lab access.",
-    "[5] Asha has supervisor approval.",
-    "[6] Study Alpha has 12 enrolled participants.",
-    "[7] No premise states whether Asha has budget approval."
+    "[4] Asha has lab access."
   ],
   "options": ["Yes", "No", "Uncertain"]
 }
@@ -149,15 +147,21 @@ Expected Output:
 {
   "answer": "Uncertain",
   "unit": "",
-  "explanation": "No premise states whether Asha has budget approval (Premise 7). Thus, it is uncertain.",
-  "premises_used": [7],
+  "explanation": "Asha completed ethics training (Premise 3) and has lab access (Premise 4), so she can handle participant data (Premise 0). However, it is not stated whether Asha has supervisor approval, which is required to join Study Alpha (Premise 1) and be listed as an active contributor (Premise 2). Thus, it is uncertain.",
+  "premises_used": [0, 1, 2, 3, 4],
   "reasoning": {
     "type": "fol",
     "steps": [
-      "No premise states whether Asha has budget approval"
+      "ForAll(x, (completed_ethics_training(x) ∧ has_lab_access(x)) → can_handle_participant_data(x))",
+      "ForAll(x, (can_handle_participant_data(x) ∧ has_supervisor_approval(x)) → may_join_Study_Alpha(x))",
+      "ForAll(x, (may_join_Study_Alpha(x) → listed_as_active_contributor(x)))",
+      "completed_ethics_training(Asha)",
+      "has_lab_access(Asha)",
+      "can_handle_participant_data(Asha)",
+      "Unknown: has_supervisor_approval(Asha)"
     ]
   },
-  "z3_code": "from z3 import *\\ns = Solver()\\nhas_budget_approval_Asha = Bool('has_budget_approval_Asha')\\ns.push()\\ns.add(Not(has_budget_approval_Asha))\\nr_yes = s.check()\\ns.pop()\\nif r_yes == unsat:\\n    print('Yes')\\nelse:\\n    s.push()\\n    s.add(has_budget_approval_Asha)\\n    r_no = s.check()\\n    s.pop()\\n    if r_no == unsat:\\n        print('No')\\n    else:\\n        print('Uncertain')"
+  "z3_code": "from z3 import *\\ns = Solver()\\ncompleted_ethics_training_Asha = Bool('completed_ethics_training_Asha')\\nhas_lab_access_Asha = Bool('has_lab_access_Asha')\\ncan_handle_participant_data_Asha = Bool('can_handle_participant_data_Asha')\\nhas_supervisor_approval_Asha = Bool('has_supervisor_approval_Asha')\\nmay_join_Study_Alpha_Asha = Bool('may_join_Study_Alpha_Asha')\\nlisted_as_active_contributor_Asha = Bool('listed_as_active_contributor_Asha')\\ns.add(Implies(And(completed_ethics_training_Asha, has_lab_access_Asha), can_handle_participant_data_Asha))\\ns.add(Implies(And(can_handle_participant_data_Asha, has_supervisor_approval_Asha), may_join_Study_Alpha_Asha))\\ns.add(Implies(may_join_Study_Alpha_Asha, listed_as_active_contributor_Asha))\\ns.add(completed_ethics_training_Asha == True)\\ns.add(has_lab_access_Asha == True)\\n# Note: has_supervisor_approval_Asha is not added as True or False because it is not specified in the premises\\ns.push()\\ns.add(Not(listed_as_active_contributor_Asha))\\nr_yes = s.check()\\ns.pop()\\nif r_yes == unsat:\\n    print('Yes')\\nelse:\\n    s.push()\\n    s.add(listed_as_active_contributor_Asha)\\n    r_no = s.check()\\n    s.pop()\\n    if r_no == unsat:\\n        print('No')\\n    else:\\n        print('Uncertain')"
 }
 """
 
