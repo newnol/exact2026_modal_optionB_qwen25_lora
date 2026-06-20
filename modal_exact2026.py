@@ -72,11 +72,11 @@ vllm_image = (
         "z3-solver==4.13.3.0",
     )
     .add_local_file(
-        LOCAL_ROOT / "scripts" / "patch_vllm_metrics.py",
-        remote_path="/root/patch_vllm_metrics.py",
+        LOCAL_ROOT / "scripts" / "fix_vllm_metrics.py",
+        remote_path="/root/fix_vllm_metrics.py",
         copy=True,
     )
-    .run_commands("python /root/patch_vllm_metrics.py")
+    .run_commands("python /root/fix_vllm_metrics.py")
     .env(
         {
             "HF_HOME": "/root/.cache/huggingface",
