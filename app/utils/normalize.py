@@ -64,6 +64,7 @@ def _keyword_in_text(keyword: str, text: str) -> bool:
     return nk in nt
 
 
+r"""
 def audit_premises_used(
     req: PredictRequest,
     raw: dict[str, Any],
@@ -193,6 +194,7 @@ def audit_premises_used(
         })
 
     return final_sorted
+"""
 
 
 def coerce_response(req: PredictRequest, raw: dict[str, Any]) -> PredictResponseItem:
@@ -227,7 +229,9 @@ def coerce_response(req: PredictRequest, raw: dict[str, Any]) -> PredictResponse
                 if 0 <= idx < len(req.premises) and idx not in premises_used:
                     premises_used.append(idx)
 
-        premises_used = audit_premises_used(req, raw, premises_used)
+        # Comment out the auditor to trust model-generated premises directly (GRPO optimized)
+        # premises_used = audit_premises_used(req, raw, premises_used)
+        premises_used = sorted(premises_used)
 
         return PredictResponseItem(
             query_id=req.query_id,

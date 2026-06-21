@@ -44,8 +44,9 @@ def route_after_check_type1(state: AgentState) -> str:
     needs_retry = state.get("needs_retry", False)
     retry_count = state.get("retry_count", 0)
 
-    # Allow at most 2 retries (3 runs total: initial + 2 retries), and under 35s budget
-    if needs_retry and retry_count < 3 and elapsed < 35.0:
+    # Allow at most 2 retries (3 runs total: initial + 2 retries), and under 30s budget
+    # to leave a safe margin for network transit and queueing.
+    if needs_retry and retry_count < 3 and elapsed < 30.0:
         return "llm_type1"
 
     return "formatter"
