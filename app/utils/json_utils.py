@@ -4,6 +4,39 @@ from typing import Any
 
 
 _CODE_FENCE_RE = re.compile(r"```(?:json)?\s*(.*?)```", re.DOTALL | re.IGNORECASE)
+_STRING_FIELD_TEMPLATE = r'"{field}"\s*:\s*"((?:\\.|[^"\\])*)"'
+_LIST_FIELD_TEMPLATE = r'"{field}"\s*:\s*(\[[^\]]*\])'
+_OBJECT_FIELD_TEMPLATE = r'"{field}"\s*:\s*(\{{.*?\}})'
+
+
+def _salvage_partial_object(candidate: str) -> dict[str, Any] | None:
+    result: dict[str, Any] = {}
+
+    for field in ("answer", "unit", "explanation", "z3_code", "python_code"):
+        match = re.search(_STRING_FIELD_TEMPLATE.format(field=re.escape(field)), candidate, flags=re.DOTALL)
+        if match:
+            try:
+                result[field] = json.loads(f'"{match.group(1)}"')
+            except json.JSONDecodeError:
+                result[field] = match.group(1)
+
+    for field in ("premises_used",):
+        match = re.search(_LIST_FIELD_TEMPLATE.format(field=re.escape(field)), candidate, flags=re.DOTALL)
+        if match:
+            try:
+                result[field] = json.loads(match.group(1))
+            except json.JSONDecodeError:
+                pass
+
+    for field in ("reasoning",):
+        match = re.search(_OBJECT_FIELD_TEMPLATE.format(field=re.escape(field)), candidate, flags=re.DOTALL)
+        if match:
+            try:
+                result[field] = json.loads(match.group(1))
+            except json.JSONDecodeError:
+                pass
+
+    return result or None
 
 
 def extract_json_object(text: str) -> dict[str, Any]:
@@ -58,5 +91,9 @@ def extract_json_object(text: str) -> dict[str, Any]:
                 if not isinstance(parsed, dict):
                     raise ValueError("parsed JSON is not an object")
                 return parsed
+
+    salvaged = _salvage_partial_object(candidate[start:])
+    if salvaged is not None:
+        return salvaged
 
     raise ValueError("unterminated JSON object")

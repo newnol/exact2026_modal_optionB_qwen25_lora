@@ -1,0 +1,639 @@
+{
+  "passed": 37,
+  "failed": 13,
+  "errors": [],
+  "details": [
+    {
+      "query_id": "T1_0008",
+      "type": "type1",
+      "status": "PASS",
+      "elapsed_s": 71.5,
+      "expected_answer": "No",
+      "actual_answer": "No",
+      "explanation": "Having thermal sensors and an optical camera does not guarantee emergency response data because the satellite lacks cloud-penetrating radar.",
+      "premises_used": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "query_id": "T1_0013",
+      "type": "type1",
+      "status": "FAIL",
+      "elapsed_s": 32.8,
+      "expected_answer": "D",
+      "actual_answer": "C",
+      "explanation": "Manuscript Nova reports a preregistered hypothesis (Premise 3) and releases its analysis code (Premise 4). According to Premise 0, this improves methodological transparency. Then, according to Premise 1, since it passes the reproducibility checklist, it is eligible for open science recognition (Premise 2). Therefore, Manuscript Nova lacks methodological transparency (not eligible for open science recognition implies lack of transparency).",
+      "premises_used": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5
+      ]
+    },
+    {
+      "query_id": "T1_0022",
+      "type": "type1",
+      "status": "PASS",
+      "elapsed_s": 30.6,
+      "expected_answer": "Yes",
+      "actual_answer": "Yes",
+      "explanation": "The Amber Amulet has a humidity-control log and no pest-damage report, making it storage-ready (Premise 0). It also has a provenance certificate (Premise 7), so it is eligible for exhibition (Premise 1). With curator approval (Premise 8), it can be placed on public display (Premise 2), satisfying all conditions.",
+      "premises_used": [
+        0,
+        1,
+        2,
+        5,
+        6,
+        7,
+        8,
+        9
+      ]
+    },
+    {
+      "query_id": "T1_0023",
+      "type": "type1",
+      "status": "PASS",
+      "elapsed_s": 29.0,
+      "expected_answer": "A",
+      "actual_answer": "A",
+      "explanation": "The Atlas case is audit-ready because it is secured (Premise 2) and the forensic report has been submitted (Premise 7). However, formal closure is not established by the premises since no manager has signed off (Premise 3). Thus, the Atlas case is audit-ready, but formal closure is not established.",
+      "premises_used": [
+        1,
+        2,
+        3,
+        7
+      ]
+    },
+    {
+      "query_id": "T1_0027",
+      "type": "type1",
+      "status": "PASS",
+      "elapsed_s": 38.6,
+      "expected_answer": "D",
+      "actual_answer": "D",
+      "explanation": "Mira has a fever (Premise 5) and low oxygen saturation (Premise 6), so she is placed in respiratory isolation (Premise 0). With a positive rapid test (Premise 7), she enters the antiviral protocol (Premise 1). Renal impairment is present (Premise 8), requiring dose adjustment (Premise 3), which means she needs dose review before receiving the standard antiviral dose (Premise 4). Thus, Mira enters the antiviral protocol and requires dose review.",
+      "premises_used": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ]
+    },
+    {
+      "query_id": "T1_0031",
+      "type": "type1",
+      "status": "FAIL",
+      "elapsed_s": 37.4,
+      "expected_answer": "B",
+      "actual_answer": "A",
+      "explanation": "Type 1 pipeline failed safely: unterminated JSON object",
+      "premises_used": []
+    },
+    {
+      "query_id": "T1_0032",
+      "type": "type1",
+      "status": "FAIL",
+      "elapsed_s": 37.4,
+      "expected_answer": "No",
+      "actual_answer": "Uncertain",
+      "explanation": "Type 1 pipeline failed safely: unterminated JSON object",
+      "premises_used": []
+    },
+    {
+      "query_id": "T1_0033",
+      "type": "type1",
+      "status": "FAIL",
+      "elapsed_s": 35.6,
+      "expected_answer": "C",
+      "actual_answer": "D",
+      "explanation": "Since Azure Reef shows bleaching signs and has a temperature anomaly, it triggers a stress alert according to rule 0. With a coral cover below 30 percent, it becomes a restoration priority per rule 1. Given high local fishing pressure, a temporary no-take zone is recommended by rule 2. Assuming community consultation is complete, the conservation plan is approved according to rule 3, making D the correct conclusion.",
+      "premises_used": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ]
+    },
+    {
+      "query_id": "T1_0034",
+      "type": "type1",
+      "status": "PASS",
+      "elapsed_s": 34.5,
+      "expected_answer": "Yes",
+      "actual_answer": "Yes",
+      "explanation": "Azure Reef shows bleaching signs (Premise 4) and has a temperature anomaly (Premise 5), so a stress alert is issued (Premise 0). With a stress alert and coral cover below 30 percent (Premise 6), it becomes a restoration priority (Premmise 1). Since it's a restoration priority and has high local fishing pressure (Premise 7), a temporary no-take zone is recommended (Premise 2).",
+      "premises_used": [
+        0,
+        1,
+        2,
+        4,
+        5,
+        6,
+        7
+      ]
+    },
+    {
+      "query_id": "T1_0039",
+      "type": "type1",
+      "status": "PASS",
+      "elapsed_s": 17.2,
+      "expected_answer": "C",
+      "actual_answer": "C",
+      "explanation": "Batch Nova stayed between 2 and 8 degrees Celsius (Premise 5) and has an intact seal (Premise 6). According to Premise 0, this makes it viable. Since it has a complete temperature log (Premise 7), clinic distribution is allowed (Premise 1). Given the recipient clinic is certified (Premise 8), Batch Nova can be administered (Premise 2), supporting option C.",
+      "premises_used": [
+        0,
+        1,
+        2,
+        5,
+        6,
+        7,
+        8,
+        9
+      ]
+    },
+    {
+      "query_id": "T1_0042",
+      "type": "type1",
+      "status": "FAIL",
+      "elapsed_s": 17.2,
+      "expected_answer": "Uncertain",
+      "actual_answer": "Yes",
+      "explanation": "Asha completed ethics training (Premise 3), has lab access (Premise 4), and has supervisor approval (Premise 5). Thus she can handle participant data (Premise 0) and may join Study Alpha (Premise 1). Since every researcher who may join Study Alpha is listed as an active contributor (Premise 2), Asha is listed as an active contributor.",
+      "premises_used": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5
+      ]
+    },
+    {
+      "query_id": "T1_0046",
+      "type": "type1",
+      "status": "FAIL",
+      "elapsed_s": 36.9,
+      "expected_answer": "A",
+      "actual_answer": "D",
+      "explanation": "Since Linh has first-aid certification (Premise 3) and completed patient privacy training (Premise 4), she may assist at the triage desk (Premise 0). However, since the morning triage shift needs only 3 volunteers but has 5 available (Premise 5 and Premise 6), not all volunteers can be assigned, so Linh cannot assist at the triage desk.",
+      "premises_used": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ]
+    },
+    {
+      "query_id": "T1_0048",
+      "type": "type1",
+      "status": "PASS",
+      "elapsed_s": 13.9,
+      "expected_answer": "Uncertain",
+      "actual_answer": "Uncertain",
+      "explanation": "No premise states that Linh has pharmacy training (Premise 7). Thus, it is uncertain whether she has it or not.",
+      "premises_used": [
+        7
+      ]
+    },
+    {
+      "query_id": "T1_TEST",
+      "type": "type1",
+      "status": "PASS",
+      "elapsed_s": 8.7,
+      "expected_answer": "No",
+      "actual_answer": "No",
+      "explanation": "Student A has 118 credits according to Premise 1, but eligibility requires at least 120 credits per Premise 0. Thus, Student A is not eligible for graduation.",
+      "premises_used": [
+        0,
+        1
+      ]
+    },
+    {
+      "query_id": "T1_NUM_001",
+      "type": "type1",
+      "status": "PASS",
+      "elapsed_s": 9.8,
+      "expected_answer": "12",
+      "actual_answer": "12",
+      "explanation": "Study Alpha has 12 enrolled participants as explicitly stated in Premise 6.",
+      "premises_used": [
+        6
+      ]
+    },
+    {
+      "query_id": "T1_NUM_002",
+      "type": "type1",
+      "status": "PASS",
+      "elapsed_s": 19.1,
+      "expected_answer": "18",
+      "actual_answer": "18",
+      "explanation": "Bob has 15 credits from core courses (Premise 3) and earned a 3-credit internship bonus (Premise 2), totaling 18 credits.",
+      "premises_used": [
+        0,
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "query_id": "T1_NUM_003",
+      "type": "type1",
+      "status": "PASS",
+      "elapsed_s": 20.9,
+      "expected_answer": "3",
+      "actual_answer": "3",
+      "explanation": "Alice is an undergraduate student and can borrow a maximum of 5 books at a time (Premise 0). However, she has one late return on her record, which reduces her borrowing limit by 2 books (Premise 2). Therefore, the maximum number of books Alice can borrow now is 5 - 2 = 3.",
+      "premises_used": [
+        0,
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "query_id": "T1_TXT_001",
+      "type": "type1",
+      "status": "PASS",
+      "elapsed_s": 13.8,
+      "expected_answer": "Asha",
+      "actual_answer": "Asha",
+      "explanation": "Since Asha completed ethics training (Premise 3) and has lab access (Premise 4), she can handle participant data (Premise 0). Since she can handle participant data and has supervisor approval (Premise 5), she may join Study Alpha (Premise 1).",
+      "premises_used": [
+        0,
+        1,
+        3,
+        4,
+        5
+      ]
+    },
+    {
+      "query_id": "T1_TXT_002",
+      "type": "type1",
+      "status": "PASS",
+      "elapsed_s": 25.0,
+      "expected_answer": "Professor Green",
+      "actual_answer": "Professor Green",
+      "explanation": "Professor Green's proposal is ready to launch because it has department approval (Premise 2), budget clearance (Premise 3), and an assigned advisor (Premise 4), making it marked as active (Premise 0) and thus ready to launch (Premise 1).",
+      "premises_used": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5
+      ]
+    },
+    {
+      "query_id": "T1_TXT_003",
+      "type": "type1",
+      "status": "PASS",
+      "elapsed_s": 28.3,
+      "expected_answer": "Charlie",
+      "actual_answer": "Charlie",
+      "explanation": "Student Charlie is selected as the Outstanding Service Award Recipient because he has a GPA above 3.8 (Premise 2) and completed a community service project (Premise 3), making him eligible for the award (Premise 0). Since he is nominated by the dean (Premise 4), he is selected as the Award Recipient (Premise 1). No other student meets all criteria, so Charlie is the unique recipient.",
+      "premises_used": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5
+      ]
+    },
+    {
+      "query_id": "T1_GEN_021",
+      "type": "type1",
+      "status": "PASS",
+      "elapsed_s": 15.6,
+      "expected_answer": "No",
+      "actual_answer": "No",
+      "explanation": "Student B has not taken Calculus I (Premise 1), and enrolling in Advanced Physics requires passing Calculus I (Premise 0). Since Student B did not meet the prerequisite, they are not allowed to enroll.",
+      "premises_used": [
+        0,
+        1
+      ]
+    },
+    {
+      "query_id": "T1_GEN_022",
+      "type": "type1",
+      "status": "PASS",
+      "elapsed_s": 18.7,
+      "expected_answer": "Yes",
+      "actual_answer": "Yes",
+      "explanation": "Student C has a GPA of 3.7 (Premise 1) and no disciplinary record (Premise 2). Since 3.7 is at least 3.6, Student C meets the GPA requirement. With no disciplinary record, Student C satisfies all conditions for the Merit Scholarship (Premise 0). Thus, Student C is awarded the Merit Scholarship.",
+      "premises_used": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "query_id": "T1_GEN_023",
+      "type": "type1",
+      "status": "PASS",
+      "elapsed_s": 21.4,
+      "expected_answer": "Uncertain",
+      "actual_answer": "Uncertain",
+      "explanation": "Student D paid tuition fees on September 10 (Premise 1), which is before September 15. According to Premise 0, students who pay after September 15 have their course registration cancelled, but since D paid earlier, their registration is not cancelled.",
+      "premises_used": [
+        0,
+        1
+      ]
+    },
+    {
+      "query_id": "T1_GEN_024",
+      "type": "type1",
+      "status": "FAIL",
+      "elapsed_s": 9.6,
+      "expected_answer": "Uncertain",
+      "actual_answer": "No",
+      "explanation": "Student E received a GPA of 1.8 this semester (Premise 1), but no information is provided about their GPA in the previous semester. Therefore, it is uncertain whether they received a GPA below 2.0 for two consecutive semesters, so they are not dismissed from the university.",
+      "premises_used": [
+        0,
+        1
+      ]
+    },
+    {
+      "query_id": "T1_GEN_025",
+      "type": "type1",
+      "status": "PASS",
+      "elapsed_s": 16.1,
+      "expected_answer": "No",
+      "actual_answer": "No",
+      "explanation": "Student F missed 4 classes of Physics I (Premise 1), which is more than 3. According to Premise 0, missing more than 3 classes disqualifies a student from taking the final exam, so Student F is not allowed to take the final exam in Physics I.",
+      "premises_used": [
+        0,
+        1
+      ]
+    },
+    {
+      "query_id": "T2_0002",
+      "type": "type2",
+      "status": "PASS",
+      "elapsed_s": 9.8,
+      "expected_answer": "1.5e-4",
+      "actual_answer": "0.00015",
+      "explanation": "The capacitance is found by converting the given charge from milli-coulombs to coulombs (2.4 mC = 2.4 × 10⁻³ C) and then applying the fundamental relation C = Q / U. Substituting the values yields C = 2.4 × 10⁻³ C / 16 V = 1.5 × 10⁻⁴ F, which equals 0.00015 F.",
+      "premises_used": []
+    },
+    {
+      "query_id": "T2_0004",
+      "type": "type2",
+      "status": "FAIL",
+      "elapsed_s": 19.8,
+      "expected_answer": "7200",
+      "actual_answer": "7199.999999999998",
+      "explanation": "The two charges are equal in magnitude and opposite in sign, so their electric fields at the midpoint cancel in direction but add in magnitude. The distance from each charge to the midpoint is r = d/2 = 0.10 m. The field from one charge is E = k|q|/r^2 = 9e9 * 4e-9 / (0.10)^2 = 3600 N/C. The net field magnitude is twice this value, giving 7200 N/C.",
+      "premises_used": []
+    },
+    {
+      "query_id": "T2_0005",
+      "type": "type2",
+      "status": "PASS",
+      "elapsed_s": 14.8,
+      "expected_answer": "450",
+      "actual_answer": "450.0",
+      "explanation": "The electric potential at point P is found by summing the individual potentials due to each charge. Using Coulomb's constant k = 9.0 × 10^9 N·m²/C², the distance of 10 cm converts to 0.10 m from q1 = +6.0 nC, giving V1 = 450 V. The distance of 20 cm converts to 0.20 m from q2 = -2.0 nC, giving V2 = -450 V. Adding these yields a net potential of 0 V.",
+      "premises_used": []
+    },
+    {
+      "query_id": "T2_0007",
+      "type": "type2",
+      "status": "PASS",
+      "elapsed_s": 8.8,
+      "expected_answer": "1800",
+      "actual_answer": "1800.0",
+      "explanation": "The energy converted in the resistor is calculated using the formula E = V²t/R. Converting 5 minutes to seconds gives 300 s. Substituting V = 12 V, R = 24 Ω yields E = 1800 J.",
+      "premises_used": []
+    },
+    {
+      "query_id": "T2_0009",
+      "type": "type2",
+      "status": "PASS",
+      "elapsed_s": 1.2,
+      "expected_answer": "6",
+      "actual_answer": "6",
+      "explanation": "For two resistors in parallel, Req = 2 ohm, so I = V/Req = 12/2 = 6 A.",
+      "premises_used": []
+    },
+    {
+      "query_id": "T2_0013",
+      "type": "type2",
+      "status": "PASS",
+      "elapsed_s": 11.5,
+      "expected_answer": "50",
+      "actual_answer": "50.0",
+      "explanation": "The car starts at 20 m/s and decelerates uniformly to rest under an acceleration of -4.0 m/s². Using the kinematic equation v² = v₀² + 2ad with v = 0, we find the braking distance is 50.0 m.",
+      "premises_used": []
+    },
+    {
+      "query_id": "T2_0015",
+      "type": "type2",
+      "status": "FAIL",
+      "elapsed_s": 12.4,
+      "expected_answer": "7.07",
+      "actual_answer": "7.0710678118654755",
+      "explanation": "The object starts from rest, so its initial kinetic energy is zero. The work done by the constant net force over a distance equals the final kinetic energy. Using the work-energy theorem, we compute the final speed from the work done divided by half the mass.",
+      "premises_used": []
+    },
+    {
+      "query_id": "T2_0017",
+      "type": "type2",
+      "status": "PASS",
+      "elapsed_s": 10.0,
+      "expected_answer": "31500",
+      "actual_answer": "31500.0",
+      "explanation": "The heat required is calculated using Q = mcΔT. With m = 0.50 kg, ΔT = 15 °C, and c = 4200 J/(kg·°C), the result is 31500 J.",
+      "premises_used": []
+    },
+    {
+      "query_id": "T2_0028",
+      "type": "type2",
+      "status": "PASS",
+      "elapsed_s": 7.5,
+      "expected_answer": "3",
+      "actual_answer": "3.0",
+      "explanation": "The power consumed by the lamp is found using the formula P = U * I. With U = 12 V and I = 0.25 A, the calculation yields P = 3.0 W.",
+      "premises_used": []
+    },
+    {
+      "query_id": "T2_0029",
+      "type": "type2",
+      "status": "PASS",
+      "elapsed_s": 10.2,
+      "expected_answer": "1.5e-5",
+      "actual_answer": "1.5e-05",
+      "explanation": "The work done by a charge moving through a potential difference is given by W = qU. Converting 3 μC to coulombs gives 3 × 10⁻⁶ C. Multiplying by 5 V yields 1.5 × 10⁻⁵ J.",
+      "premises_used": []
+    },
+    {
+      "query_id": "T2_0049",
+      "type": "type2",
+      "status": "PASS",
+      "elapsed_s": 10.3,
+      "expected_answer": "48",
+      "actual_answer": "48.0",
+      "explanation": "The secondary voltage is found using the transformer voltage ratio: U2 = U1 * (N2/N1). Substituting the given values yields U2 = 48 V.",
+      "premises_used": []
+    },
+    {
+      "query_id": "T2_TEST",
+      "type": "type2",
+      "status": "PASS",
+      "elapsed_s": 1.5,
+      "expected_answer": "5",
+      "actual_answer": "5",
+      "explanation": "For two resistors in parallel, Req = 2.4 ohm, so I = V/Req = 12/2.4 = 5 A.",
+      "premises_used": []
+    },
+    {
+      "query_id": "T2_LD047",
+      "type": "type2",
+      "status": "FAIL",
+      "elapsed_s": 20.0,
+      "expected_answer": "Directed toward q₂",
+      "actual_answer": "Directed toward q2",
+      "explanation": "The test charge is positive. q1 repels it away from q1, while q2 attracts it toward q2. Since q2 is closer, the attractive force from q2 dominates, so the net force is directed toward q2.",
+      "premises_used": []
+    },
+    {
+      "query_id": "T2_TD374",
+      "type": "type2",
+      "status": "FAIL",
+      "elapsed_s": 13.6,
+      "expected_answer": "0; 0",
+      "actual_answer": "Charge: 36.0 μC, Energy: 0.000216 J",
+      "explanation": "When the capacitor is short-circuited, the voltage across it instantly drops to zero. Therefore, the charge on the capacitor becomes zero, and the stored energy also becomes zero.",
+      "premises_used": []
+    },
+    {
+      "query_id": "T2_TD386",
+      "type": "type2",
+      "status": "FAIL",
+      "elapsed_s": 12.1,
+      "expected_answer": "decreases by half",
+      "actual_answer": "0.5",
+      "explanation": "The capacitance of a parallel-plate capacitor with a dielectric is given by C = ε₀ ε_r S / d. Since the plate area S and separation d remain unchanged, the capacitance is directly proportional to the dielectric constant ε_r. Replacing ε = 4 with ε = 2 halves the capacitance, so the change factor is 0.5.",
+      "premises_used": []
+    },
+    {
+      "query_id": "T2_GEN_016",
+      "type": "type2",
+      "status": "PASS",
+      "elapsed_s": 11.7,
+      "expected_answer": "4",
+      "actual_answer": "4.0",
+      "explanation": "For two resistors in parallel, the equivalent resistance is found by taking the reciprocal of the sum of the reciprocals of each resistor's value. Using R1 = 12 ohm and R2 = 6 ohm yields Req = 4 ohm.",
+      "premises_used": []
+    },
+    {
+      "query_id": "T2_GEN_017",
+      "type": "type2",
+      "status": "PASS",
+      "elapsed_s": 7.6,
+      "expected_answer": "3",
+      "actual_answer": "3.0",
+      "explanation": "The current flowing through a resistor when a constant voltage is applied is found using Ohm's law, which states that current is equal to voltage divided by resistance. Substituting the given values yields a current of 3 amperes.",
+      "premises_used": []
+    },
+    {
+      "query_id": "T2_GEN_018",
+      "type": "type2",
+      "status": "PASS",
+      "elapsed_s": 11.8,
+      "expected_answer": "240",
+      "actual_answer": "240.0",
+      "explanation": "The charge stored on a capacitor is given by Q = CV. Converting 20 μF to farads gives 20 × 10⁻⁶ F. Multiplying by 12 V yields 240 × 10⁻⁶ C, which equals 240 μC.",
+      "premises_used": []
+    },
+    {
+      "query_id": "T2_GEN_019",
+      "type": "type2",
+      "status": "PASS",
+      "elapsed_s": 8.2,
+      "expected_answer": "5",
+      "actual_answer": "5.0",
+      "explanation": "The power dissipated by a resistor is given by P = I^2 R. Solving for R gives R = P / I^2. Substituting P = 45 W and I = 3 A yields R = 45 / 9 = 5 Ω.",
+      "premises_used": []
+    },
+    {
+      "query_id": "T2_GEN_020",
+      "type": "type2",
+      "status": "PASS",
+      "elapsed_s": 7.4,
+      "expected_answer": "2",
+      "actual_answer": "2.0",
+      "explanation": "For resistors in series, the total resistance is the sum of individual resistances. Using Ohm's law, the current is the applied voltage divided by the total resistance.",
+      "premises_used": []
+    },
+    {
+      "query_id": "T2_GEN_021",
+      "type": "type2",
+      "status": "PASS",
+      "elapsed_s": 14.8,
+      "expected_answer": "885.4",
+      "actual_answer": "885.4",
+      "explanation": "The capacitance of a parallel-plate capacitor is given by C = ε₀A/d. Converting the area and separation to SI units gives A = 0.1 m² and d = 0.001 m. Substituting the values yields C = 8.854 × 10^-12 F, which is 885.4 pF.",
+      "premises_used": []
+    },
+    {
+      "query_id": "T2_GEN_022",
+      "type": "type2",
+      "status": "FAIL",
+      "elapsed_s": 11.5,
+      "expected_answer": "1",
+      "actual_answer": "999999999",
+      "explanation": "The energy stored in a capacitor is given by E = (1/2)CV^2. Converting 50 μF to farads gives 50 × 10^-6 F. Substituting C = 50×10^-6 F and V = 200 V yields E = 999999999 nJ.",
+      "premises_used": []
+    },
+    {
+      "query_id": "T2_GEN_023",
+      "type": "type2",
+      "status": "PASS",
+      "elapsed_s": 11.9,
+      "expected_answer": "25",
+      "actual_answer": "25",
+      "explanation": "When capacitors are connected in parallel, their equivalent capacitance is the sum of their individual capacitances. Given C1 = 10 μF and C2 = 15 μF, the equivalent capacitance is 10 μF + 15 μF = 25 μF.",
+      "premises_used": []
+    },
+    {
+      "query_id": "T2_GEN_024",
+      "type": "type2",
+      "status": "PASS",
+      "elapsed_s": 11.0,
+      "expected_answer": "50",
+      "actual_answer": "50.0",
+      "explanation": "The total impedance of a series RLC circuit is found by combining the resistance and net reactance. The net reactance is the difference between inductive reactance and capacitive reactance. Using the Pythagorean theorem, the magnitude of the impedance is then the square root of the sum of the square of the resistance and the square of the net reactance.",
+      "premises_used": []
+    },
+    {
+      "query_id": "T2_GEN_025",
+      "type": "type2",
+      "status": "PASS",
+      "elapsed_s": 7.5,
+      "expected_answer": "0.6",
+      "actual_answer": "0.6",
+      "explanation": "The power factor in a series AC circuit is the ratio of resistance to total impedance. Using the given values R = 30 Ω and Z = 50 Ω, the power factor is calculated as 30/50 = 0.6.",
+      "premises_used": []
+    }
+  ]
+}

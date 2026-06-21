@@ -1,0 +1,280 @@
+{
+  "passed": 3,
+  "failed": 20,
+  "errors": [],
+  "details": [
+    {
+      "query_id": "REG_T1_0025",
+      "type": "type1",
+      "status": "FAIL",
+      "elapsed_s": 39.9,
+      "expected_answer": "C",
+      "actual_answer": "B",
+      "explanation": "MedKit-7 is medical and weighs under 2 kg (Premises 5 and 6), so it receives priority delivery status (Premise 0). With priority status and a clear route (due to an emergency waiver and mapped alternate route, Premises 7 and 8), it can be dispatched (Premise 1). Eligible for the aerial corridor and having launch approval (via assignment, Premise 3), but no premise states it’s not a priority package, making B the only certain conclusion.",
+      "premises_used": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9
+      ]
+    },
+    {
+      "query_id": "REG_T1_0026",
+      "type": "type1",
+      "status": "PASS",
+      "elapsed_s": 37.8,
+      "expected_answer": "Yes",
+      "actual_answer": "Yes",
+      "explanation": "The MedKit-7 is medical and weighs under 2 kilograms, so it receives priority delivery status. With an approved emergency waiver and a mapped alternate route, the route is clear. Safe weather ensures eligibility for the aerial corridor, allowing MedKit-7 to use it.",
+      "premises_used": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9
+      ]
+    },
+    {
+      "query_id": "REG_T1_0031",
+      "type": "type1",
+      "status": "PASS",
+      "elapsed_s": 32.5,
+      "expected_answer": "B",
+      "actual_answer": "B",
+      "explanation": "The River Codex is searchable online because it meets the scanning and metadata requirements, and OCR has been verified. However, it is not safe for public release because it contains personal data, requiring privacy review, which is not mentioned as completed.",
+      "premises_used": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9
+      ]
+    },
+    {
+      "query_id": "REG_T1_0032",
+      "type": "type1",
+      "status": "FAIL",
+      "elapsed_s": 37.1,
+      "expected_answer": "No",
+      "actual_answer": "Uncertain",
+      "explanation": "Type 1 pipeline failed safely: unterminated JSON object",
+      "premises_used": []
+    },
+    {
+      "query_id": "REG_T1_0035",
+      "type": "type1",
+      "status": "PASS",
+      "elapsed_s": 18.1,
+      "expected_answer": "D",
+      "actual_answer": "D",
+      "explanation": "Autonomous watering is allowed for Greenhouse Basil because irrigation is scheduled (Premise 1), and sensor calibration is current (Premise 8). According to Premise 2, if irrigation is scheduled and sensor calibration is current, then autonomous watering is allowed.",
+      "premises_used": [
+        0,
+        1,
+        2,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9
+      ]
+    },
+    {
+      "query_id": "REG_T2_0001",
+      "type": "type2",
+      "status": "FAIL",
+      "elapsed_s": 11.4,
+      "expected_answer": "3.38 × 10^-3",
+      "actual_answer": "0.003384",
+      "explanation": "The energy stored in a capacitor is given by E = ½ C U². Converting 47 μF to farads gives 47 × 10⁻⁶ F. Substituting C = 47 × 10⁻⁶ F and U = 12 V yields E = 0.003384 J.",
+      "premises_used": []
+    },
+    {
+      "query_id": "REG_T2_0002",
+      "type": "type2",
+      "status": "FAIL",
+      "elapsed_s": 9.7,
+      "expected_answer": "150",
+      "actual_answer": "0.00015",
+      "explanation": "The capacitance is found by converting the given charge from milli-coulombs to coulombs (2.4 mC = 2.4 × 10⁻³ C) and then applying the fundamental relation C = Q / U. Substituting the values yields C = 2.4 × 10⁻³ C / 16 V = 1.5 × 10⁻⁴ F, which equals 0.00015 F.",
+      "premises_used": []
+    },
+    {
+      "query_id": "REG_T2_0003",
+      "type": "type2",
+      "status": "FAIL",
+      "elapsed_s": 13.7,
+      "expected_answer": "1.5",
+      "actual_answer": "1.5000000000000004",
+      "explanation": "The magnitude of the electrostatic force between two point charges is given by Coulomb's law: F = k * |q1 * q2| / r^2. Converting the charges from microcoulombs to coulombs (3.0e-6 C and 5.0e-6 C), substituting the distance (0.30 m) and Coulomb constant (9.0e9 N·m²/C²), we compute the force magnitude as approximately 1.50 N.",
+      "premises_used": []
+    },
+    {
+      "query_id": "REG_T2_0004",
+      "type": "type2",
+      "status": "FAIL",
+      "elapsed_s": 16.7,
+      "expected_answer": "7.20 × 10^3",
+      "actual_answer": "7199.999999999998",
+      "explanation": "At the midpoint, each charge is 0.1 m away. The positive charge (+4.0 nC) creates an upward field, the negative charge (-4.0 nC) creates a downward field. Both fields point in the same direction, so their magnitudes add.",
+      "premises_used": []
+    },
+    {
+      "query_id": "REG_T2_0006",
+      "type": "type2",
+      "status": "FAIL",
+      "elapsed_s": 14.0,
+      "expected_answer": "36",
+      "actual_answer": "3.6e-05",
+      "explanation": "In a series connection, both capacitors store the same charge. Using the equivalent capacitance formula for series capacitors and Ohm's law, the charge on each capacitor is found to be 36 μC.",
+      "premises_used": []
+    },
+    {
+      "query_id": "REG_T2_0010",
+      "type": "type2",
+      "status": "FAIL",
+      "elapsed_s": 14.1,
+      "expected_answer": "50.3",
+      "actual_answer": "50329.21210448704",
+      "explanation": "The resonant frequency of an LC circuit is found by converting the given capacitance from microfarads to farads, then applying the formula f = 1/(2π√(LC)). With L = 0.20 H and C = 50 μF = 50 × 10⁻⁶ F, the computed resonant frequency is approximately 50329.21 Hz.",
+      "premises_used": []
+    },
+    {
+      "query_id": "REG_T2_0011",
+      "type": "type2",
+      "status": "FAIL",
+      "elapsed_s": 8.9,
+      "expected_answer": "151",
+      "actual_answer": "150.79644737231007",
+      "explanation": "The inductive reactance is calculated using the formula X_L = 2πfL. Substituting f = 60 Hz and L = 0.40 H gives approximately 150.8 Ω.",
+      "premises_used": []
+    },
+    {
+      "query_id": "REG_T2_0012",
+      "type": "type2",
+      "status": "FAIL",
+      "elapsed_s": 13.1,
+      "expected_answer": "1",
+      "actual_answer": "{\"value\": 1.0, \"unit\": \"m/s^2\"}",
+      "explanation": "The car accelerates from 8 m/s over 66 m in 6 seconds. Using the kinematic equation d = v0*t + (1/2)*a*t^2, solving for a gives 1.0 m/s^2.",
+      "premises_used": []
+    },
+    {
+      "query_id": "REG_T2_0015",
+      "type": "type2",
+      "status": "FAIL",
+      "elapsed_s": 13.7,
+      "expected_answer": "7.07",
+      "actual_answer": "7.0710678118654755",
+      "explanation": "The object starts from rest, so its initial kinetic energy is zero. The work done by the constant net force over a distance equals the final kinetic energy. Using the work-energy theorem, the final speed is found to be approximately 7.07 m/s.",
+      "premises_used": []
+    },
+    {
+      "query_id": "REG_T2_0017",
+      "type": "type2",
+      "status": "FAIL",
+      "elapsed_s": 11.3,
+      "expected_answer": "3.15 × 10^4",
+      "actual_answer": "31500.0",
+      "explanation": "The heat required to raise the temperature of a substance is given by Q = mcΔT. Substituting m = 0.50 kg, ΔT = 15 °C, and c = 4200 J/(kg·°C) yields Q = 31500 J.",
+      "premises_used": []
+    },
+    {
+      "query_id": "REG_T2_0018",
+      "type": "type2",
+      "status": "FAIL",
+      "elapsed_s": 9.1,
+      "expected_answer": "6.68 × 10^4",
+      "actual_answer": "66800.0",
+      "explanation": "The heat required to melt ice is found by multiplying the mass of ice by its latent heat of fusion. Using the given values, the calculation yields 66800 J.",
+      "premises_used": []
+    },
+    {
+      "query_id": "REG_T2_0019",
+      "type": "type2",
+      "status": "FAIL",
+      "elapsed_s": 12.8,
+      "expected_answer": "1.25 × 10^5",
+      "actual_answer": "124709.99999999999",
+      "explanation": "The pressure is calculated using the ideal gas law P = nRT/V. Substituting n = 0.50 mol, T = 300 K, V = 0.010 m³, and R = 8.314 J/(mol·K) gives P = 124710 Pa.",
+      "premises_used": []
+    },
+    {
+      "query_id": "REG_T2_0029",
+      "type": "type2",
+      "status": "FAIL",
+      "elapsed_s": 10.5,
+      "expected_answer": "15",
+      "actual_answer": "1.5e-05",
+      "explanation": "The work done on a charge moving through a potential difference is given by W = qU. Converting 3 μC to coulombs gives 3 × 10⁻⁶ C, and multiplying by 5 V yields 1.5 × 10⁻⁵ J.",
+      "premises_used": []
+    },
+    {
+      "query_id": "REG_T2_0039",
+      "type": "type2",
+      "status": "FAIL",
+      "elapsed_s": 11.6,
+      "expected_answer": "1",
+      "actual_answer": "1000000.0",
+      "explanation": "The resistance of a conductor is given by R = ρL/S, where ρ is resistivity, L is length, and S is cross-sectional area. Converting the area from 1 mm² to 1e-6 m² and substituting the given values yields R = 1000000 Ω.",
+      "premises_used": []
+    },
+    {
+      "query_id": "REG_T2_LD047",
+      "type": "type2",
+      "status": "FAIL",
+      "elapsed_s": 22.9,
+      "expected_answer": "Directed toward q₂",
+      "actual_answer": "Directed toward q2",
+      "explanation": "The test charge is positive. q1 repels it away from q1, while q2 attracts it toward q2. Since q2 is closer, the attractive force from q2 dominates, so the net force is directed toward q2.",
+      "premises_used": []
+    },
+    {
+      "query_id": "REG_T2_TD374",
+      "type": "type2",
+      "status": "FAIL",
+      "elapsed_s": 15.4,
+      "expected_answer": "0; 0",
+      "actual_answer": "Charge: 36.00 μC, Energy: 0.0002 J",
+      "explanation": "When the capacitor is short-circuited, the voltage across it instantly drops to zero. Therefore, the final charge on the capacitor is Q = CV = (3 μF)(12 V) = 36 μC, and the stored energy is U = (1/2)CV² = 0.5(3 μF)(12 V)² = 0.216 J, which rounds to 0.0002 J.",
+      "premises_used": []
+    },
+    {
+      "query_id": "REG_T2_TD386",
+      "type": "type2",
+      "status": "FAIL",
+      "elapsed_s": 12.6,
+      "expected_answer": "decreases by half",
+      "actual_answer": "0.5",
+      "explanation": "The capacitance of a parallel-plate capacitor with a dielectric is given by C = ε₀ S / d × ε_r. Since the plate area S and separation d remain unchanged, the capacitance is directly proportional to the dielectric constant ε_r. Replacing ε = 4 with ε = 2 halves the capacitance, so the factor is 0.5.",
+      "premises_used": []
+    },
+    {
+      "query_id": "REG_T2_GEN_022",
+      "type": "type2",
+      "status": "FAIL",
+      "elapsed_s": 12.8,
+      "expected_answer": "1",
+      "actual_answer": "999999999",
+      "explanation": "The energy stored in a capacitor is given by E = (1/2)CV^2. Converting 50 μF to farads gives 5.0 × 10^-5 F. Substituting C = 5.0 × 10^-5 F and V = 200 V yields E = 9.999999999999998 × 10^-3 J, which equals approximately 10 nJ.",
+      "premises_used": []
+    }
+  ]
+}

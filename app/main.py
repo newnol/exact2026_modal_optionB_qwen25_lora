@@ -11,8 +11,8 @@ from app.config import get_settings
 from app.hardware_monitor import snapshot as hw_snapshot
 from app.llm_client import VLLMClient
 from app.logging_utils import log_entry
-from app.pipelines.type1 import solve_type1
-from app.pipelines.type2 import solve_type2
+from app.pipelines.graph import agent_graph
+from app.pipelines.mock import solve_type1_mock, solve_type2_mock
 from app.schemas import PredictRequest, PredictResponseItem, fallback_response
 
 
@@ -30,12 +30,13 @@ async def lifespan(app: FastAPI):
         base_url=settings.resolved_type2_base_url(),
         model_name=settings.resolved_type2_model_name(),
     )
+    app.state.agent_graph = agent_graph
     yield
 
 
 app = FastAPI(
     title="EXACT 2026 Submission Server",
-    version="0.2.0-lora-routing",
+    version="0.3.0-langgraph",
     lifespan=lifespan,
 )
 
@@ -72,6 +73,8 @@ def _ensure_runtime_clients() -> None:
             base_url=settings.resolved_type2_base_url(),
             model_name=settings.resolved_type2_model_name(),
         )
+    if not hasattr(app.state, "agent_graph"):
+        app.state.agent_graph = agent_graph
 
 
 @app.post("/predict", response_model=list[PredictResponseItem])
@@ -81,17 +84,46 @@ async def predict(payload: PredictRequest) -> list[PredictResponseItem]:
     settings = get_settings()
     _ensure_runtime_clients()
 
-    if payload.type == "type1":
-        item = await solve_type1(payload, app.state.type1_llm, mock_mode=settings.mock_mode)
-    elif payload.type == "type2":
-        item = await solve_type2(
-            payload,
-            app.state.type2_llm,
-            mock_mode=settings.mock_mode,
-            use_llm_fallback=settings.type2_fallback_to_llm,
-        )
+    if settings.mock_mode:
+        if payload.type == "type1":
+            item = await solve_type1_mock(payload)
+        elif payload.type == "type2":
+            item = await solve_type2_mock(payload)
+        else:
+            item = fallback_response(payload, f"Unsupported type: {payload.type}")
     else:
-        item = fallback_response(payload, f"Unsupported type: {payload.type}")
+        try:
+            # Reconstruct initial state payload for LangGraph
+            state_input = {
+                "query_id": payload.query_id,
+                "qtype": payload.type,
+                "query": payload.query,
+                "premises": payload.premises,
+                "options": payload.options,
+                "retry_count": 0,
+                "attempts_history": [],
+                "start_time": time.time(),
+            }
+            # Execute graph dynamically passing the LLM clients config
+            config = {
+                "configurable": {
+                    "type1_llm": app.state.type1_llm,
+                    "type2_llm": app.state.type2_llm,
+                }
+            }
+            state_output = await app.state.agent_graph.ainvoke(state_input, config)
+
+            # Map compiled state final outputs to predictable PredictResponseItem
+            item = PredictResponseItem(
+                query_id=payload.query_id,
+                answer=state_output.get("final_answer", ""),
+                unit=state_output.get("final_unit", ""),
+                explanation=state_output.get("final_explanation", ""),
+                premises_used=state_output.get("final_premises_used", []),
+                reasoning=state_output.get("final_reasoning", {"type": "cot", "steps": []}),
+            )
+        except Exception as exc:
+            item = fallback_response(payload, f"LangGraph execution failed safely: {exc}")
 
     latency_s = round(time.time() - t0, 3)
     hw_after = hw_snapshot()
@@ -114,7 +146,7 @@ async def predict(payload: PredictRequest) -> list[PredictResponseItem]:
         "hw_before": hw_before,
         "hw_after": hw_after,
         "model": {
-            "reasoning_type": getattr(item.reasoning, "type", None) if hasattr(item, "reasoning") else None,
+            "reasoning_type": getattr(item.reasoning, "type", None) if hasattr(item, "reasoning") else (item.reasoning.get("type") if isinstance(item.reasoning, dict) else None),
         },
     })
 

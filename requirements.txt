@@ -10,3 +10,6 @@ huggingface_hub>=0.24.0
 
 sympy==1.13.3
 z3-solver==4.13.3.0
+
+langchain-core
+langgraph

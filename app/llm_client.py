@@ -30,7 +30,15 @@ class VLLMClient:
                 raise RuntimeError("/v1/models returned no models")
             return data[0]["id"]
 
-    async def chat_json(self, system_prompt: str, user_prompt: str, *, query_id: str = "", pipeline: str = "") -> str:
+    async def chat_json(
+        self,
+        system_prompt: str,
+        user_prompt: str,
+        *,
+        query_id: str = "",
+        pipeline: str = "",
+        max_tokens: int | None = None,
+    ) -> str:
         model = await self.get_model_name()
         payload = {
             "model": model,
@@ -39,7 +47,7 @@ class VLLMClient:
                 {"role": "user", "content": user_prompt},
             ],
             "temperature": self.settings.llm_temperature,
-            "max_tokens": self.settings.llm_max_tokens,
+            "max_tokens": max_tokens if max_tokens is not None else self.settings.llm_max_tokens,
             # Some vLLM/chat templates support this; if your model rejects it, remove it.
             "response_format": {"type": "json_object"},
         }
