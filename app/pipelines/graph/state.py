@@ -23,8 +23,6 @@ class AgentState(TypedDict):
     sandbox_ok: bool
     sandbox_output: str
     sandbox_error: str
-    verified_answer: str
-    deterministic_locked: bool
 
     # Agent loop counters and budget
     retry_count: int

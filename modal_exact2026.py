@@ -191,6 +191,8 @@ def predict_api():
     os.environ["REQUEST_TIMEOUT_SECONDS"] = "50"
     os.environ["LLM_TEMPERATURE"] = "0"
     os.environ["LLM_MAX_TOKENS"] = "768"
+    os.environ["TYPE1_LLM_MAX_TOKENS"] = "1536"
+    os.environ["TYPE2_LLM_MAX_TOKENS"] = "768"
     os.environ["LOG_FILE_PATH"] = "/root/exact/logs/requests.jsonl"
 
     from app.main import app as fastapi_app

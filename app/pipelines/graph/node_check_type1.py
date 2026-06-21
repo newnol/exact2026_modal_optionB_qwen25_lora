@@ -31,12 +31,10 @@ def check_type1_node(state: AgentState) -> Dict[str, Any]:
             "retry_count": retry_count + 1,
             "attempts_history": new_attempts,
             "needs_retry": True,
-            "verified_answer": z3_ans if sandbox_ok else "",
         }
 
     return {
         "needs_retry": False,
-        "verified_answer": z3_ans if sandbox_ok else "",
     }
 
 
