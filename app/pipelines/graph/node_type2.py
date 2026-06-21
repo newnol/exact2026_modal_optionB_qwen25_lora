@@ -52,6 +52,41 @@ def _parse_number(text: str) -> float:
     return float(cleaned)
 
 
+def _query_mentions_multiple_outputs(query: str) -> bool:
+    lowered = query.lower()
+    hints = [
+        "each capacitor",
+        "both",
+        "charge and energy",
+        "two values",
+        "separated by",
+        "respectively",
+        "how do",
+    ]
+    return any(hint in lowered for hint in hints)
+
+
+def should_use_type2_fast_path(query: str) -> bool:
+    """Only use deterministic Type 2 when the pattern is simple and clearly in-coverage."""
+    if _query_mentions_multiple_outputs(query):
+        return False
+
+    q = query.lower()
+    ambiguity_markers = [
+        "explain why",
+        "derive",
+        "prove",
+        "show that",
+        "compare",
+        "approximate",
+        "estimate",
+    ]
+    if any(marker in q for marker in ambiguity_markers):
+        return False
+
+    return deterministic_physics_solver(query) is not None
+
+
 def _find_value(query: str, label: str, unit_pattern: str = "") -> float | None:
     pattern = rf"{label}\s*=\s*([-+]?[0-9]+(?:\.[0-9]+)?(?:\s*[x×]\s*10\^-?[0-9]+)?)\s*{unit_pattern}"
     match = re.search(pattern, query, flags=re.IGNORECASE)
@@ -261,6 +296,21 @@ def deterministic_physics_solver(query: str) -> dict[str, Any] | None:
                     "reasoning": {"type": "compute", "steps": ["a = 2(d - v0 t)/t^2"]},
                 }
 
+    if re.search(r"brakes uniformly to rest", q, re.IGNORECASE):
+        speed_match = re.search(r"moving at\s*([0-9]+(?:\.[0-9]+)?)\s*m/s", q, flags=re.IGNORECASE)
+        accel_match = re.search(r"acceleration\s*([-−]?[0-9]+(?:\.[0-9]+)?)\s*m/s\^?2", q, flags=re.IGNORECASE)
+        if speed_match and accel_match:
+            speed = float(speed_match.group(1))
+            accel = abs(float(accel_match.group(1).replace("−", "-")))
+            distance = speed * speed / (2.0 * accel)
+            return {
+                "answer": _fmt_number(distance, digits=4),
+                "unit": "m",
+                "explanation": "Use v^2 = v0^2 + 2as with final speed zero, so s = v0^2 / (2|a|).",
+                "premises_used": [],
+                "reasoning": {"type": "compute", "steps": ["0 = v0^2 - 2|a|s", "s = v0^2 / (2|a|)"]},
+            }
+
     if re.search(r"starts from rest", q, re.IGNORECASE) and re.search(r"final speed", q, re.IGNORECASE):
         fmatch = re.search(r"force of\s*([0-9]+(?:\.[0-9]+)?)\s*N", q, flags=re.IGNORECASE)
         dmatch = re.search(r"distance of\s*([0-9]+(?:\.[0-9]+)?)\s*m", q, flags=re.IGNORECASE)
@@ -276,6 +326,23 @@ def deterministic_physics_solver(query: str) -> dict[str, Any] | None:
                 "explanation": "Use work-energy: Fd = 1/2 m v^2.",
                 "premises_used": [],
                 "reasoning": {"type": "compute", "steps": ["v = sqrt(2Fd/m)"]},
+            }
+
+    if re.search(r"elevator accelerating upward", q, re.IGNORECASE):
+        mass_match = re.search(r"mass\s*([0-9]+(?:\.[0-9]+)?)\s*kg", q, flags=re.IGNORECASE)
+        accel_match = re.search(r"upward at\s*([0-9]+(?:\.[0-9]+)?)\s*m/s\^?2", q, flags=re.IGNORECASE)
+        g_match = re.search(r"g\s*=\s*([0-9]+(?:\.[0-9]+)?)\s*m/s\^?2", q, flags=re.IGNORECASE)
+        if mass_match and accel_match and g_match:
+            mass = float(mass_match.group(1))
+            accel = float(accel_match.group(1))
+            gravity = float(g_match.group(1))
+            normal_force = mass * (gravity + accel)
+            return {
+                "answer": _fmt_number(normal_force, digits=4),
+                "unit": "N",
+                "explanation": "For upward acceleration, N - mg = ma, so N = m(g + a).",
+                "premises_used": [],
+                "reasoning": {"type": "compute", "steps": ["N - mg = ma", "N = m(g + a)"]},
             }
 
     if re.search(r"raise the temperature", q, re.IGNORECASE):
@@ -296,6 +363,14 @@ def deterministic_physics_solver(query: str) -> dict[str, Any] | None:
 
     if re.search(r"latent heat of fusion", q, re.IGNORECASE):
         mass = _find_value(q, r"melt", r"kg")
+        if mass is None:
+            mass_match = re.search(r"melt\s*([0-9]+(?:\.[0-9]+)?)\s*kg", q, flags=re.IGNORECASE)
+            if mass_match:
+                mass = float(mass_match.group(1))
+            else:
+                mass_match = re.search(r"required to melt\s*([0-9]+(?:\.[0-9]+)?)\s*kg", q, flags=re.IGNORECASE)
+                if mass_match:
+                    mass = float(mass_match.group(1))
         latent = _find_value(q, r"L", r"J/kg")
         if mass is not None and latent is not None:
             heat = mass * latent
@@ -320,6 +395,21 @@ def deterministic_physics_solver(query: str) -> dict[str, Any] | None:
                 "explanation": "Use the ideal gas law P = nRT/V.",
                 "premises_used": [],
                 "reasoning": {"type": "compute", "steps": ["P = nRT/V"]},
+            }
+
+    if re.search(r"converging lens", q, re.IGNORECASE) and re.search(r"image distance", q, re.IGNORECASE):
+        object_match = re.search(r"([0-9]+(?:\.[0-9]+)?)\s*cm in front of a converging lens", q, flags=re.IGNORECASE)
+        focal_match = re.search(r"focal length\s*([0-9]+(?:\.[0-9]+)?)\s*cm", q, flags=re.IGNORECASE)
+        if object_match and focal_match:
+            object_distance = float(object_match.group(1))
+            focal_length = float(focal_match.group(1))
+            image_distance = 1.0 / ((1.0 / focal_length) - (1.0 / object_distance))
+            return {
+                "answer": _fmt_number(image_distance, digits=4),
+                "unit": "cm",
+                "explanation": "Use the thin lens equation 1/f = 1/do + 1/di.",
+                "premises_used": [],
+                "reasoning": {"type": "compute", "steps": ["1/f = 1/do + 1/di", "di = 1 / (1/f - 1/do)"]},
             }
 
     if re.search(r"work done", q, re.IGNORECASE) and re.search(r"potential difference", q, re.IGNORECASE):

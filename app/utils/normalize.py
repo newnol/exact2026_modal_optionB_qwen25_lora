@@ -25,6 +25,28 @@ def normalize_unit(unit: Any) -> str:
     return value
 
 
+def _strip_embedded_unit(answer: str, unit: str) -> str:
+    normalized_unit = normalize_unit(unit)
+    if not normalized_unit:
+        return answer
+    stripped = answer.strip()
+    for candidate in {normalized_unit, normalized_unit.replace("ohm", "Ω")}:
+        if candidate and stripped.endswith(candidate):
+            stripped = stripped[: -len(candidate)].strip()
+    return stripped
+
+
+def _normalize_type2_answer(answer: str, unit: str) -> str:
+    stripped = _strip_embedded_unit(answer, unit)
+    try:
+        value = float(stripped)
+    except ValueError:
+        return stripped
+    if abs(value - round(value)) < 1e-9:
+        return str(int(round(value)))
+    return stripped
+
+
 def _normalize_choice(value: str) -> str:
     return re.sub(r"\s+", " ", value.strip()).lower()
 
@@ -251,7 +273,7 @@ def coerce_response(req: PredictRequest, raw: dict[str, Any]) -> PredictResponse
     # Type 2: answer should be numerical/string value only; unit goes separately.
     return PredictResponseItem(
         query_id=req.query_id,
-        answer=answer or "0",
+        answer=_normalize_type2_answer(answer or "0", raw.get("unit", "")),
         unit=normalize_unit(raw.get("unit", "")),
         explanation=explanation,
         premises_used=[],
