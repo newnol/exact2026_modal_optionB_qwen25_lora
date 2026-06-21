@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import ast
 import os
 import subprocess
 import sys
@@ -16,7 +17,91 @@ class SandboxResult:
     timed_out: bool = False
 
 
-def run_python_code(code: str, timeout_seconds: float = 3.0) -> SandboxResult:
+_BLOCKED_MODULES = {
+    "builtins",
+    "ctypes",
+    "importlib",
+    "io",
+    "os",
+    "pathlib",
+    "resource",
+    "shutil",
+    "signal",
+    "socket",
+    "subprocess",
+    "sys",
+    "tempfile",
+    "threading",
+}
+
+_BLOCKED_CALLS = {
+    "__import__",
+    "breakpoint",
+    "compile",
+    "eval",
+    "exec",
+    "help",
+    "input",
+    "open",
+}
+
+_ALLOWED_IMPORTS = {
+    "type1": {"z3"},
+    "type2": {"math", "sympy"},
+}
+
+_PRELUDES = {
+    "type1": "from z3 import *",
+    "type2": "\n".join(
+        [
+            "import math",
+            "try:",
+            "    import sympy as sp",
+            "except Exception:",
+            "    sp = None",
+        ]
+    ),
+}
+
+
+def _called_name(node: ast.AST) -> str | None:
+    if isinstance(node, ast.Name):
+        return node.id
+    if isinstance(node, ast.Attribute):
+        return node.attr
+    return None
+
+
+def validate_python_code(code: str, *, sandbox_type: str) -> str | None:
+    try:
+        tree = ast.parse(code, mode="exec")
+    except SyntaxError as exc:
+        return f"syntax error: {exc}"
+
+    allowed_imports = _ALLOWED_IMPORTS.get(sandbox_type, set())
+
+    for node in ast.walk(tree):
+        if isinstance(node, ast.Import):
+            for alias in node.names:
+                root = alias.name.split(".", 1)[0]
+                if root not in allowed_imports:
+                    return f"blocked import: {alias.name}"
+        elif isinstance(node, ast.ImportFrom):
+            module = (node.module or "").split(".", 1)[0]
+            if module not in allowed_imports:
+                return f"blocked import: {node.module or ''}"
+        elif isinstance(node, ast.Call):
+            name = _called_name(node.func)
+            if name in _BLOCKED_CALLS:
+                return f"blocked call: {name}"
+        elif isinstance(node, ast.Attribute):
+            if node.attr.startswith("__"):
+                return f"blocked attribute: {node.attr}"
+
+    return None
+
+
+def run_python_code(code: str, *, sandbox_type: str, timeout_seconds: float) -> SandboxResult:
     """Run model-generated Python in a short-lived subprocess.
 
     This is a lightweight inference-time sandbox for competition physics solvers.
@@ -27,13 +112,13 @@ def run_python_code(code: str, timeout_seconds: float = 3.0) -> SandboxResult:
     if not code:
         return SandboxResult(False, "", "empty python_code", 1)
 
-    prelude = """
-import math
-try:
-    import sympy as sp
-except Exception:
-    sp = None
-""".strip()
+    validation_error = validate_python_code(code, sandbox_type=sandbox_type)
+    if validation_error:
+        return SandboxResult(False, "", validation_error, 1)
+
+    prelude = _PRELUDES.get(sandbox_type)
+    if not prelude:
+        return SandboxResult(False, "", f"unknown sandbox_type: {sandbox_type}", 1)
 
     full_code = prelude + "\n\n" + code + "\n"
     with tempfile.TemporaryDirectory(prefix="exact_sandbox_") as td:
