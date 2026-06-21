@@ -44,7 +44,7 @@ def _normalize_type2_answer(answer: str, unit: str) -> str:
         return stripped
     if abs(value - round(value)) < 1e-9:
         return str(int(round(value)))
-    return stripped
+    return format(value, ".12g")
 
 
 def _normalize_choice(value: str) -> str:

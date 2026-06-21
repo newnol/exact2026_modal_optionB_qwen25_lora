@@ -55,11 +55,9 @@ def _parse_number(text: str) -> float:
 def _query_mentions_multiple_outputs(query: str) -> bool:
     lowered = query.lower()
     hints = [
-        "each capacitor",
         "both",
         "charge and energy",
         "two values",
-        "separated by",
         "respectively",
         "how do",
     ]
