@@ -274,7 +274,8 @@ def coerce_response(req: PredictRequest, raw: dict[str, Any]) -> PredictResponse
                 if 0 <= idx < len(req.premises) and idx not in premises_used:
                     premises_used.append(idx)
 
-        premises_used = audit_premises_used(req, raw, premises_used)
+        # premises_used = audit_premises_used(req, raw, premises_used)
+        premises_used = sorted(list(set(premises_used)))
 
         return PredictResponseItem(
             query_id=req.query_id,
