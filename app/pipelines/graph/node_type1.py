@@ -56,16 +56,16 @@ Input Query:
 {
   "query_id": "quick_type1_mc",
   "type": "type1",
-  "query": "Based on the premises, which option is logically supported?\\nA. John may join Project X\\nB. John cannot handle participant data\\nC. John has budget approval\\nD. Project X has 20 enrolled participants",
+  "query": "Based on the premises, which option is logically supported?\\nA. Asha may join Study Alpha\\nB. Asha cannot handle participant data\\nC. Asha has budget approval\\nD. Study Alpha has 20 enrolled participants",
   "premises": [
     "[0] If a researcher completed ethics training and has lab access, then that researcher can handle participant data.",
-    "[1] If a researcher can handle participant data and has supervisor approval, then that researcher may join Project X.",
-    "[2] Every researcher who may join Project X is listed as an active contributor.",
-    "[3] John completed ethics training.",
-    "[4] John has lab access.",
-    "[5] John has supervisor approval.",
-    "[6] Project X has 12 enrolled participants.",
-    "[7] No premise states whether John has budget approval."
+    "[1] If a researcher can handle participant data and has supervisor approval, then that researcher may join Study Alpha.",
+    "[2] Every researcher who may join Study Alpha is listed as an active contributor.",
+    "[3] Asha completed ethics training.",
+    "[4] Asha has lab access.",
+    "[5] Asha has supervisor approval.",
+    "[6] Study Alpha has 12 enrolled participants.",
+    "[7] No premise states whether Asha has budget approval."
   ],
   "options": ["A", "B", "C", "D"]
 }
@@ -73,20 +73,20 @@ Expected Output:
 {
   "answer": "A",
   "unit": "",
-  "explanation": "Since John completed ethics training (Premise 3) and has lab access (Premise 4), she can handle participant data (Premise 0). Since she can handle participant data and has supervisor approval (Premise 5), she may join Project X (Premise 1). Therefore, John may join Project X is supported.",
+  "explanation": "Since Asha completed ethics training (Premise 3) and has lab access (Premise 4), she can handle participant data (Premise 0). Since she can handle participant data and has supervisor approval (Premise 5), she may join Study Alpha (Premise 1). Therefore, Asha may join Study Alpha is supported.",
   "premises_used": [0, 1, 3, 4, 5],
   "reasoning": {
     "type": "fol",
     "steps": [
       "ForAll(x, (completed_ethics_training(x) ∧ has_lab_access(x)) → can_handle_participant_data(x))",
-      "ForAll(x, (can_handle_participant_data(x) ∧ has_supervisor_approval(x)) → may_join_Project_X(x))",
-      "completed_ethics_training(John)",
-      "has_lab_access(John)",
-      "has_supervisor_approval(John)",
-      "may_join_Project_X(John)"
+      "ForAll(x, (can_handle_participant_data(x) ∧ has_supervisor_approval(x)) → may_join_Study_Alpha(x))",
+      "completed_ethics_training(Asha)",
+      "has_lab_access(Asha)",
+      "has_supervisor_approval(Asha)",
+      "may_join_Study_Alpha(Asha)"
     ]
   },
-  "z3_code": "import sys\\nfrom z3 import *\\ns = Solver()\\ncompleted_ethics_training_John = Bool('completed_ethics_training_John')\\nhas_lab_access_John = Bool('has_lab_access_John')\\ncan_handle_participant_data_John = Bool('can_handle_participant_data_John')\\nhas_supervisor_approval_John = Bool('has_supervisor_approval_John')\\nmay_join_Project_X_John = Bool('may_join_Project_X_John')\\nhas_budget_approval_John = Bool('has_budget_approval_John')\\nenrolled_participants = Int('enrolled_participants')\\ns.add(Implies(And(completed_ethics_training_John, has_lab_access_John), can_handle_participant_data_John))\\ns.add(Implies(And(can_handle_participant_data_John, has_supervisor_approval_John), may_join_Project_X_John))\\ns.add(completed_ethics_training_John == True)\\ns.add(has_lab_access_John == True)\\ns.add(has_supervisor_approval_John == True)\\ns.add(enrolled_participants == 12)\\ns.push()\\ns.add(Not(may_join_Project_X_John))\\nif s.check() == unsat:\\n    print('A')\\n    sys.exit(0)\\ns.pop()\\ns.push()\\ns.add(can_handle_participant_data_John)\\nif s.check() == unsat:\\n    print('B')\\n    sys.exit(0)\\ns.pop()\\ns.push()\\ns.add(Not(has_budget_approval_John))\\nif s.check() == unsat:\\n    print('C')\\n    sys.exit(0)\\ns.pop()\\ns.push()\\ns.add(Not(enrolled_participants == 20))\\nif s.check() == unsat:\\n    print('D')\\n    sys.exit(0)\\ns.pop()\\nprint('Uncertain')"
+  "z3_code": "import sys\\nfrom z3 import *\\ns = Solver()\\ncompleted_ethics_training_Asha = Bool('completed_ethics_training_Asha')\\nhas_lab_access_Asha = Bool('has_lab_access_Asha')\\ncan_handle_participant_data_Asha = Bool('can_handle_participant_data_Asha')\\nhas_supervisor_approval_Asha = Bool('has_supervisor_approval_Asha')\\nmay_join_Study_Alpha_Asha = Bool('may_join_Study_Alpha_Asha')\\nhas_budget_approval_Asha = Bool('has_budget_approval_Asha')\\nenrolled_participants = Int('enrolled_participants')\\ns.add(Implies(And(completed_ethics_training_Asha, has_lab_access_Asha), can_handle_participant_data_Asha))\\ns.add(Implies(And(can_handle_participant_data_Asha, has_supervisor_approval_Asha), may_join_Study_Alpha_Asha))\\ns.add(completed_ethics_training_Asha == True)\\ns.add(has_lab_access_Asha == True)\\ns.add(has_supervisor_approval_Asha == True)\\ns.add(enrolled_participants == 12)\\ns.push()\\ns.add(Not(may_join_Study_Alpha_Asha))\\nif s.check() == unsat:\\n    print('A')\\n    sys.exit(0)\\ns.pop()\\ns.push()\\ns.add(can_handle_participant_data_Asha)\\nif s.check() == unsat:\\n    print('B')\\n    sys.exit(0)\\ns.pop()\\ns.push()\\ns.add(Not(has_budget_approval_Asha))\\nif s.check() == unsat:\\n    print('C')\\n    sys.exit(0)\\ns.pop()\\ns.push()\\ns.add(Not(enrolled_participants == 20))\\nif s.check() == unsat:\\n    print('D')\\n    sys.exit(0)\\ns.pop()\\nprint('Uncertain')"
 }
 
 [Example 2: Yes/No/Uncertain Question (Yes Answer)]
@@ -94,16 +94,16 @@ Input Query:
 {
   "query_id": "quick_type1_yes_no",
   "type": "type1",
-  "query": "Is John listed as an active contributor?",
+  "query": "Is Asha listed as an active contributor?",
   "premises": [
     "[0] If a researcher completed ethics training and has lab access, then that researcher can handle participant data.",
-    "[1] If a researcher can handle participant data and has supervisor approval, then that researcher may join Project X.",
-    "[2] Every researcher who may join Project X is listed as an active contributor.",
-    "[3] John completed ethics training.",
-    "[4] John has lab access.",
-    "[5] John has supervisor approval.",
-    "[6] Project X has 12 enrolled participants.",
-    "[7] No premise states whether John has budget approval."
+    "[1] If a researcher can handle participant data and has supervisor approval, then that researcher may join Study Alpha.",
+    "[2] Every researcher who may join Study Alpha is listed as an active contributor.",
+    "[3] Asha completed ethics training.",
+    "[4] Asha has lab access.",
+    "[5] Asha has supervisor approval.",
+    "[6] Study Alpha has 12 enrolled participants.",
+    "[7] No premise states whether Asha has budget approval."
   ],
   "options": ["Yes", "No", "Uncertain"]
 }
@@ -111,21 +111,21 @@ Expected Output:
 {
   "answer": "Yes",
   "unit": "",
-  "explanation": "John completed ethics training (Premise 3), has lab access (Premise 4), and has supervisor approval (Premise 5). Thus she can handle participant data (Premise 0) and may join Project X (Premise 1). Since every researcher who may join Project X is listed as an active contributor (Premise 2), John is listed as an active contributor.",
+  "explanation": "Asha completed ethics training (Premise 3), has lab access (Premise 4), and has supervisor approval (Premise 5). Thus she can handle participant data (Premise 0) and may join Study Alpha (Premise 1). Since every researcher who may join Study Alpha is listed as an active contributor (Premise 2), Asha is listed as an active contributor.",
   "premises_used": [0, 1, 2, 3, 4, 5],
   "reasoning": {
     "type": "fol",
     "steps": [
       "ForAll(x, (completed_ethics_training(x) ∧ has_lab_access(x)) → can_handle_participant_data(x))",
-      "ForAll(x, (can_handle_participant_data(x) ∧ has_supervisor_approval(x)) → may_join_Project_X(x))",
-      "ForAll(x, (may_join_Project_X(x) → listed_as_active_contributor(x)))",
-      "completed_ethics_training(John)",
-      "has_lab_access(John)",
-      "has_supervisor_approval(John)",
-      "listed_as_active_contributor(John)"
+      "ForAll(x, (can_handle_participant_data(x) ∧ has_supervisor_approval(x)) → may_join_Study_Alpha(x))",
+      "ForAll(x, (may_join_Study_Alpha(x) → listed_as_active_contributor(x)))",
+      "completed_ethics_training(Asha)",
+      "has_lab_access(Asha)",
+      "has_supervisor_approval(Asha)",
+      "listed_as_active_contributor(Asha)"
     ]
   },
-  "z3_code": "from z3 import *\\ns = Solver()\\ncompleted_ethics_training_John = Bool('completed_ethics_training_John')\\nhas_lab_access_John = Bool('has_lab_access_John')\\ncan_handle_participant_data_John = Bool('can_handle_participant_data_John')\\nhas_supervisor_approval_John = Bool('has_supervisor_approval_John')\\nmay_join_Project_X_John = Bool('may_join_Project_X_John')\\nlisted_as_active_contributor_John = Bool('listed_as_active_contributor_John')\\ns.add(Implies(And(completed_ethics_training_John, has_lab_access_John), can_handle_participant_data_John))\\ns.add(Implies(And(can_handle_participant_data_John, has_supervisor_approval_John), may_join_Project_X_John))\\ns.add(Implies(may_join_Project_X_John, listed_as_active_contributor_John))\\ns.add(completed_ethics_training_John == True)\\ns.add(has_lab_access_John == True)\\ns.add(has_supervisor_approval_John == True)\\ns.push()\\ns.add(Not(listed_as_active_contributor_John))\\nr_yes = s.check()\\ns.pop()\\nif r_yes == unsat:\\n    print('Yes')\\nelse:\\n    s.push()\\n    s.add(listed_as_active_contributor_John)\\n    r_no = s.check()\\n    s.pop()\\n    if r_no == unsat:\\n        print('No')\\n    else:\\n        print('Uncertain')"
+  "z3_code": "from z3 import *\\ns = Solver()\\ncompleted_ethics_training_Asha = Bool('completed_ethics_training_Asha')\\nhas_lab_access_Asha = Bool('has_lab_access_Asha')\\ncan_handle_participant_data_Asha = Bool('can_handle_participant_data_Asha')\\nhas_supervisor_approval_Asha = Bool('has_supervisor_approval_Asha')\\nmay_join_Study_Alpha_Asha = Bool('may_join_Study_Alpha_Asha')\\nlisted_as_active_contributor_Asha = Bool('listed_as_active_contributor_Asha')\\ns.add(Implies(And(completed_ethics_training_Asha, has_lab_access_Asha), can_handle_participant_data_Asha))\\ns.add(Implies(And(can_handle_participant_data_Asha, has_supervisor_approval_Asha), may_join_Study_Alpha_Asha))\\ns.add(Implies(may_join_Study_Alpha_Asha, listed_as_active_contributor_Asha))\\ns.add(completed_ethics_training_Asha == True)\\ns.add(has_lab_access_Asha == True)\\ns.add(has_supervisor_approval_Asha == True)\\ns.push()\\ns.add(Not(listed_as_active_contributor_Asha))\\nr_yes = s.check()\\ns.pop()\\nif r_yes == unsat:\\n    print('Yes')\\nelse:\\n    s.push()\\n    s.add(listed_as_active_contributor_Asha)\\n    r_no = s.check()\\n    s.pop()\\n    if r_no == unsat:\\n        print('No')\\n    else:\\n        print('Uncertain')"
 }
 
 [Example 3: Yes/No/Uncertain Question (Uncertain due to Missing Fact)]
@@ -133,13 +133,13 @@ Input Query:
 {
   "query_id": "quick_type1_missing_fact",
   "type": "type1",
-  "query": "Is John listed as an active contributor?",
+  "query": "Is Asha listed as an active contributor?",
   "premises": [
     "[0] If a researcher completed ethics training and has lab access, then that researcher can handle participant data.",
-    "[1] If a researcher can handle participant data and has supervisor approval, then that researcher may join Project X.",
-    "[2] Every researcher who may join Project X is listed as an active contributor.",
-    "[3] John completed ethics training.",
-    "[4] John has lab access."
+    "[1] If a researcher can handle participant data and has supervisor approval, then that researcher may join Study Alpha.",
+    "[2] Every researcher who may join Study Alpha is listed as an active contributor.",
+    "[3] Asha completed ethics training.",
+    "[4] Asha has lab access."
   ],
   "options": ["Yes", "No", "Uncertain"]
 }
@@ -147,21 +147,21 @@ Expected Output:
 {
   "answer": "Uncertain",
   "unit": "",
-  "explanation": "John completed ethics training (Premise 3) and has lab access (Premise 4), so she can handle participant data (Premise 0). However, it is not stated whether John has supervisor approval, which is required to join Project X (Premise 1) and be listed as an active contributor (Premise 2). Thus, it is uncertain.",
+  "explanation": "Asha completed ethics training (Premise 3) and has lab access (Premise 4), so she can handle participant data (Premise 0). However, it is not stated whether Asha has supervisor approval, which is required to join Study Alpha (Premise 1) and be listed as an active contributor (Premise 2). Thus, it is uncertain.",
   "premises_used": [0, 1, 2, 3, 4],
   "reasoning": {
     "type": "fol",
     "steps": [
       "ForAll(x, (completed_ethics_training(x) ∧ has_lab_access(x)) → can_handle_participant_data(x))",
-      "ForAll(x, (can_handle_participant_data(x) ∧ has_supervisor_approval(x)) → may_join_Project_X(x))",
-      "ForAll(x, (may_join_Project_X(x) → listed_as_active_contributor(x)))",
-      "completed_ethics_training(John)",
-      "has_lab_access(John)",
-      "can_handle_participant_data(John)",
-      "Unknown: has_supervisor_approval(John)"
+      "ForAll(x, (can_handle_participant_data(x) ∧ has_supervisor_approval(x)) → may_join_Study_Alpha(x))",
+      "ForAll(x, (may_join_Study_Alpha(x) → listed_as_active_contributor(x)))",
+      "completed_ethics_training(Asha)",
+      "has_lab_access(Asha)",
+      "can_handle_participant_data(Asha)",
+      "Unknown: has_supervisor_approval(Asha)"
     ]
   },
-  "z3_code": "from z3 import *\\ns = Solver()\\ncompleted_ethics_training_John = Bool('completed_ethics_training_John')\\nhas_lab_access_John = Bool('has_lab_access_John')\\ncan_handle_participant_data_John = Bool('can_handle_participant_data_John')\\nhas_supervisor_approval_John = Bool('has_supervisor_approval_John')\\nmay_join_Project_X_John = Bool('may_join_Project_X_John')\\nlisted_as_active_contributor_John = Bool('listed_as_active_contributor_John')\\ns.add(Implies(And(completed_ethics_training_John, has_lab_access_John), can_handle_participant_data_John))\\ns.add(Implies(And(can_handle_participant_data_John, has_supervisor_approval_John), may_join_Project_X_John))\\ns.add(Implies(may_join_Project_X_John, listed_as_active_contributor_John))\\ns.add(completed_ethics_training_John == True)\\ns.add(has_lab_access_John == True)\\n# Note: has_supervisor_approval_John is not added as True or False because it is not specified in the premises\\ns.push()\\ns.add(Not(listed_as_active_contributor_John))\\nr_yes = s.check()\\ns.pop()\\nif r_yes == unsat:\\n    print('Yes')\\nelse:\\n    s.push()\\n    s.add(listed_as_active_contributor_John)\\n    r_no = s.check()\\n    s.pop()\\n    if r_no == unsat:\\n        print('No')\\n    else:\\n        print('Uncertain')"
+  "z3_code": "from z3 import *\\ns = Solver()\\ncompleted_ethics_training_Asha = Bool('completed_ethics_training_Asha')\\nhas_lab_access_Asha = Bool('has_lab_access_Asha')\\ncan_handle_participant_data_Asha = Bool('can_handle_participant_data_Asha')\\nhas_supervisor_approval_Asha = Bool('has_supervisor_approval_Asha')\\nmay_join_Study_Alpha_Asha = Bool('may_join_Study_Alpha_Asha')\\nlisted_as_active_contributor_Asha = Bool('listed_as_active_contributor_Asha')\\ns.add(Implies(And(completed_ethics_training_Asha, has_lab_access_Asha), can_handle_participant_data_Asha))\\ns.add(Implies(And(can_handle_participant_data_Asha, has_supervisor_approval_Asha), may_join_Study_Alpha_Asha))\\ns.add(Implies(may_join_Study_Alpha_Asha, listed_as_active_contributor_Asha))\\ns.add(completed_ethics_training_Asha == True)\\ns.add(has_lab_access_Asha == True)\\n# Note: has_supervisor_approval_Asha is not added as True or False because it is not specified in the premises\\ns.push()\\ns.add(Not(listed_as_active_contributor_Asha))\\nr_yes = s.check()\\ns.pop()\\nif r_yes == unsat:\\n    print('Yes')\\nelse:\\n    s.push()\\n    s.add(listed_as_active_contributor_Asha)\\n    r_no = s.check()\\n    s.pop()\\n    if r_no == unsat:\\n        print('No')\\n    else:\\n        print('Uncertain')"
 }
 """
 
@@ -172,16 +172,16 @@ Input Query:
 {
   "query_id": "quick_type1_number",
   "type": "type1",
-  "query": "How many enrolled participants does Project X have?",
+  "query": "How many enrolled participants does Study Alpha have?",
   "premises": [
     "[0] If a researcher completed ethics training and has lab access, then that researcher can handle participant data.",
-    "[1] If a researcher can handle participant data and has supervisor approval, then that researcher may join Project X.",
-    "[2] Every researcher who may join Project X is listed as an active contributor.",
-    "[3] John completed ethics training.",
-    "[4] John has lab access.",
-    "[5] John has supervisor approval.",
-    "[6] Project X has 12 enrolled participants.",
-    "[7] No premise states whether John has budget approval."
+    "[1] If a researcher can handle participant data and has supervisor approval, then that researcher may join Study Alpha.",
+    "[2] Every researcher who may join Study Alpha is listed as an active contributor.",
+    "[3] Asha completed ethics training.",
+    "[4] Asha has lab access.",
+    "[5] Asha has supervisor approval.",
+    "[6] Study Alpha has 12 enrolled participants.",
+    "[7] No premise states whether Asha has budget approval."
   ],
   "options": []
 }
@@ -189,15 +189,15 @@ Expected Output:
 {
   "answer": "12",
   "unit": "",
-  "explanation": "Project X has 12 enrolled participants as explicitly stated in Premise 6.",
+  "explanation": "Study Alpha has 12 enrolled participants as explicitly stated in Premise 6.",
   "premises_used": [6],
   "reasoning": {
     "type": "fol",
     "steps": [
-      "Project X has 12 enrolled participants"
+      "Study Alpha has 12 enrolled participants"
     ]
   },
-  "z3_code": "from z3 import *\\ns = Solver()\\nenrolled_participants_Project_X = Int('enrolled_participants_Project_X')\\ns.add(enrolled_participants_Project_X == 12)\\nif s.check() == sat:\\n    m = s.model()\\n    print(m[enrolled_participants_Project_X])"
+  "z3_code": "from z3 import *\\ns = Solver()\\nenrolled_participants_Study_Alpha = Int('enrolled_participants_Study_Alpha')\\ns.add(enrolled_participants_Study_Alpha == 12)\\nif s.check() == sat:\\n    m = s.model()\\n    print(m[enrolled_participants_Study_Alpha])"
 }
 
 [Example 2: Free-form Text Question]
@@ -205,37 +205,37 @@ Input Query:
 {
   "query_id": "quick_type1_text",
   "type": "type1",
-  "query": "Which researcher may join Project X?",
+  "query": "Which researcher may join Study Alpha?",
   "premises": [
     "[0] If a researcher completed ethics training and has lab access, then that researcher can handle participant data.",
-    "[1] If a researcher can handle participant data and has supervisor approval, then that researcher may join Project X.",
-    "[2] Every researcher who may join Project X is listed as an active contributor.",
-    "[3] John completed ethics training.",
-    "[4] John has lab access.",
-    "[5] John has supervisor approval.",
-    "[6] Project X has 12 enrolled participants.",
-    "[7] No premise states whether John has budget approval."
+    "[1] If a researcher can handle participant data and has supervisor approval, then that researcher may join Study Alpha.",
+    "[2] Every researcher who may join Study Alpha is listed as an active contributor.",
+    "[3] Asha completed ethics training.",
+    "[4] Asha has lab access.",
+    "[5] Asha has supervisor approval.",
+    "[6] Study Alpha has 12 enrolled participants.",
+    "[7] No premise states whether Asha has budget approval."
   ],
   "options": []
 }
 Expected Output:
 {
-  "answer": "John",
+  "answer": "Asha",
   "unit": "",
-  "explanation": "Since John completed ethics training (Premise 3) and has lab access (Premise 4), she can handle participant data (Premise 0). Since she can handle participant data and has supervisor approval (Premise 5), she may join Project X (Premise 1).",
+  "explanation": "Since Asha completed ethics training (Premise 3) and has lab access (Premise 4), she can handle participant data (Premise 0). Since she can handle participant data and has supervisor approval (Premise 5), she may join Study Alpha (Premise 1).",
   "premises_used": [0, 1, 3, 4, 5],
   "reasoning": {
     "type": "fol",
     "steps": [
       "ForAll(x, (completed_ethics_training(x) ∧ has_lab_access(x)) → can_handle_participant_data(x))",
-      "ForAll(x, (can_handle_participant_data(x) ∧ has_supervisor_approval(x)) → may_join_Project_X(x))",
-      "completed_ethics_training(John)",
-      "has_lab_access(John)",
-      "has_supervisor_approval(John)",
-      "may_join_Project_X(John)"
+      "ForAll(x, (can_handle_participant_data(x) ∧ has_supervisor_approval(x)) → may_join_Study_Alpha(x))",
+      "completed_ethics_training(Asha)",
+      "has_lab_access(Asha)",
+      "has_supervisor_approval(Asha)",
+      "may_join_Study_Alpha(Asha)"
     ]
   },
-  "z3_code": "from z3 import *\\ns = Solver()\\ncompleted_ethics_training_John = Bool('completed_ethics_training_John')\\nhas_lab_access_John = Bool('has_lab_access_John')\\ncan_handle_participant_data_John = Bool('can_handle_participant_data_John')\\nhas_supervisor_approval_John = Bool('has_supervisor_approval_John')\\nmay_join_Project_X_John = Bool('may_join_Project_X_John')\\ns.add(Implies(And(completed_ethics_training_John, has_lab_access_John), can_handle_participant_data_John))\\ns.add(Implies(And(can_handle_participant_data_John, has_supervisor_approval_John), may_join_Project_X_John))\\ns.add(completed_ethics_training_John == True)\\ns.add(has_lab_access_John == True)\\ns.add(has_supervisor_approval_John == True)\\ns.push()\\ns.add(Not(may_join_Project_X_John))\\nr_yes = s.check()\\ns.pop()\\nif r_yes == unsat:\\n    print('John')\\nelse:\\n    print('Uncertain')"
+  "z3_code": "from z3 import *\\ns = Solver()\\ncompleted_ethics_training_Asha = Bool('completed_ethics_training_Asha')\\nhas_lab_access_Asha = Bool('has_lab_access_Asha')\\ncan_handle_participant_data_Asha = Bool('can_handle_participant_data_Asha')\\nhas_supervisor_approval_Asha = Bool('has_supervisor_approval_Asha')\\nmay_join_Study_Alpha_Asha = Bool('may_join_Study_Alpha_Asha')\\ns.add(Implies(And(completed_ethics_training_Asha, has_lab_access_Asha), can_handle_participant_data_Asha))\\ns.add(Implies(And(can_handle_participant_data_Asha, has_supervisor_approval_Asha), may_join_Study_Alpha_Asha))\\ns.add(completed_ethics_training_Asha == True)\\ns.add(has_lab_access_Asha == True)\\ns.add(has_supervisor_approval_Asha == True)\\ns.push()\\ns.add(Not(may_join_Study_Alpha_Asha))\\nr_yes = s.check()\\ns.pop()\\nif r_yes == unsat:\\n    print('Asha')\\nelse:\\n    print('Uncertain')"
 }
 """
 
