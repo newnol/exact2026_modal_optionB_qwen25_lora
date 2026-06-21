@@ -4,16 +4,21 @@
 from __future__ import annotations
 
 import json
+import os
 import time
 from pathlib import Path
 from typing import Any
 from urllib import error, request
 
-ENDPOINT = "https://velbertrack--exact2026-optionb-qwen25-predict-api.modal.run/predict"
+ENDPOINT = os.environ.get(
+    "PREDICT_URL",
+    "https://main-newnol--exact2026-optionb-qwen25-predict-api.modal.run/predict",
+)
 TIMEOUT = 120.0
 
-RESULTS_DIR = Path("/Users/newnol/workspace/03-competition/exact2026_optionb_langgraph/test_results")
-REGRESSION_PATH = Path("/Users/newnol/workspace/03-competition/exact2026_optionb_langgraph/tests/datatest_regression.json")
+ROOT = Path(__file__).resolve().parent.parent
+RESULTS_DIR = ROOT / "test_results"
+REGRESSION_PATH = ROOT / "tests" / "datatest_regression.json"
 
 
 def _normalize_choice(value: str) -> str:

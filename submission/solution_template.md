@@ -33,7 +33,7 @@ Both LoRA adapters are loaded before the grading slot. The system does not load,
 
 - Base LLM: `Qwen/Qwen2.5-7B-Instruct` = 7.61B parameters.
 - LoRA 1: `NguyenAn05/qwen2.5-type1-grpo-lora`, rank r=64 = 0.167B trainable/adapter parameters.
-- LoRA 2: `not-a-real-ai-guy/qwen3-type2-option-b-modes-grpo-lora`, rebuilt on `Qwen/Qwen2.5-7B-Instruct`, rank r=64 = 0.167B trainable/adapter parameters.
+- LoRA 2: `not-a-real-ai-guy/qwen2.5-type2-option-b-modes-lora`, rank r=64 = 0.167B trainable/adapter parameters.
 
 Both LoRAs share one base model instance and are loaded together in one vLLM server.
 

@@ -1,81 +1,75 @@
-# Modal Deploy Guide — EXACT 2026 Option B
+# Modal Deploy Guide
 
-## 1. Install and login
+## 1. Local setup
 
 ```bash
 pip install -r requirements-modal-local.txt
-modal setup
+~/.local/bin/uvx modal setup
 ```
 
-## 2. Create Hugging Face secret
+## 2. Hugging Face secret
 
 ```bash
-modal secret create huggingface-secret HF_TOKEN=hf_xxx
+~/.local/bin/uvx modal secret create huggingface-secret HF_TOKEN=hf_xxx
 ```
 
-If the secret already exists, edit it in the Modal dashboard.
+If the secret already exists, update it in the Modal dashboard or recreate it.
 
-## 3. Verify LoRA bases
+## 3. Verify adapter compatibility
 
 ```bash
-python scripts/preflight_check_loras.py
+python3 scripts/preflight_check_loras.py
 ```
 
-Do not deploy if this fails. Option B requires both Type 1 and Type 2 LoRA adapters to match `Qwen/Qwen2.5-7B-Instruct`.
+Do not deploy if this fails. Both adapters must match:
 
-## 4. Deploy
+- `Qwen/Qwen2.5-7B-Instruct`
+
+## 4. Deploy and switch traffic
 
 ```bash
-modal deploy modal_exact2026.py
-modal run modal_exact2026.py
+~/.local/bin/uvx modal deploy modal_exact2026.py
+~/.local/bin/uvx modal app rollover exact2026-optionb-qwen25
 ```
 
-Save the printed URLs into `submission/urls.txt`:
-
-```txt
-Prediction endpoint:
-https://...modal.run/predict
-
-vLLM model endpoint:
-https://...modal.run/v1/models
-```
-
-## 5. Test
+## 5. Verify
 
 ```bash
 export PREDICT_URL="https://...modal.run/predict"
 export VLLM_MODELS_URL="https://...modal.run/v1/models"
 
 bash scripts/modal_test_public.sh
-python scripts/modal_latency_check.py
+python3 scripts/modal_latency_check.py
 ```
 
-## 6. Grading slot operations
+Expected `/v1/models` entries:
 
-Before slot:
+```txt
+Qwen/Qwen2.5-7B-Instruct
+type1-logic
+type2-physics
+```
+
+## 6. Keep warm during grading
+
+Before the grading slot:
 
 ```bash
-python scripts/modal_keep_warm_on.py
+python3 scripts/modal_keep_warm_on.py
 ```
 
-After slot:
+After the slot:
 
 ```bash
-python scripts/modal_keep_warm_off.py
+python3 scripts/modal_keep_warm_off.py
 ```
 
-## If vLLM version pin fails
+## 7. If `/v1/models` returns 500
 
-Open `modal_exact2026.py` and replace:
+Check whether the image was built with `scripts/fix_vllm_metrics.py`.
 
-```python
-"vllm==0.21.0"
-```
+Known failure signature:
 
-with:
+- `'_IncludedRouter' object has no attribute 'path'`
 
-```python
-"vllm"
-```
-
-Then redeploy.
+That means the old prometheus/vLLM route bug is back.

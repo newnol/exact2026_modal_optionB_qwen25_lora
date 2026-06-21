@@ -12,12 +12,16 @@ from typing import Any, Dict, List
 
 import httpx
 
-ENDPOINT = "https://velbertrack--exact2026-optionb-qwen25-predict-api.modal.run/predict"
+ENDPOINT = os.environ.get(
+    "PREDICT_URL",
+    "https://main-newnol--exact2026-optionb-qwen25-predict-api.modal.run/predict",
+)
 TIMEOUT = 120.0
 
-RESULTS_DIR = Path("/Users/newnol/workspace/03-competition/exact2026_optionb_langgraph/test_results")
-DATATEST1_PATH = Path("/Users/newnol/workspace/03-competition/exact2026_optionb_langgraph/tests/datatest1.json")
-DATATEST2_PATH = Path("/Users/newnol/workspace/03-competition/exact2026_optionb_langgraph/tests/datatest2.jsonl")
+ROOT = Path(__file__).resolve().parent.parent
+RESULTS_DIR = ROOT / "test_results"
+DATATEST1_PATH = ROOT / "tests" / "datatest1.json"
+DATATEST2_PATH = ROOT / "tests" / "datatest2.jsonl"
 
 
 def _normalize_choice(value: str) -> str:

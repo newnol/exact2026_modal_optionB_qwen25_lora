@@ -31,6 +31,10 @@ modal_requirements.txt
 # Logs
 *.jsonl
 
+# Generated test artifacts
+test_results/*
+!test_results/.gitkeep
+
 # Old standalone scripts in root
 /type1.py
 /type2.py
