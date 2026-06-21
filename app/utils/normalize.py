@@ -3,6 +3,7 @@ from __future__ import annotations
 import re
 from typing import Any
 import json
+import math
 
 from app.logging_utils import log_entry
 from app.schemas import PredictRequest, PredictResponseItem
@@ -42,9 +43,23 @@ def _normalize_type2_answer(answer: str, unit: str) -> str:
         value = float(stripped)
     except ValueError:
         return stripped
-    if abs(value - round(value)) < 1e-9:
+
+    if math.isclose(value, round(value), rel_tol=0.0, abs_tol=1e-9):
         return str(int(round(value)))
-    return format(value, ".12g")
+
+    magnitude = abs(value)
+    if magnitude != 0 and (magnitude >= 1e4 or magnitude < 1e-3):
+        exponent = int(math.floor(math.log10(magnitude)))
+        mantissa = value / (10 ** exponent)
+        mantissa_text = f"{mantissa:.2f}"
+        return f"{mantissa_text} × 10^{exponent}"
+
+    text = format(value, ".10g")
+    if "e" in text.lower():
+        mantissa, exponent = re.split(r"[eE]", text, maxsplit=1)
+        mantissa_value = float(mantissa)
+        return f"{mantissa_value:.2f} × 10^{int(exponent)}"
+    return text
 
 
 def _normalize_choice(value: str) -> str:
