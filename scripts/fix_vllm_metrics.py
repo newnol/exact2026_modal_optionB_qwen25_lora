@@ -1,12 +1,10 @@
 """
-Robust fix for vLLM prometheus_fastapi_instrumentator crash.
+Robust fix for the vLLM/prometheus_fastapi_instrumentator route crash.
 
-The middleware crashes on vLLM internal _IncludedRouter objects at:
-  prometheus_fastapi_instrumentator/routing.py:_get_route_name -> route.path
-
-Strategy:
-  1. Find and replace the broken routing.py with a fixed version.
-  2. Find and patch vllm's own instrumentator/metrics.py as a backup.
+The exact vLLM file layout has moved across releases, so this script must:
+  1. Patch prometheus_fastapi_instrumentator defensively.
+  2. Patch any matching vLLM metrics entrypoint if it exists.
+  3. Never fail the image build just because one historical path disappeared.
 """
 
 from pathlib import Path
@@ -22,60 +20,95 @@ def _find_site_packages() -> Path:
 
 
 def patch_prometheus_routing(site: Path) -> bool:
-    """Replace prometheus_fastapi_instrumentator.routing.get_route_name
-    with a version that skips non-route objects (e.g. _IncludedRouter)."""
+    """Replace routing.py with a version that skips non-route objects."""
     target = site / "prometheus_fastapi_instrumentator" / "routing.py"
     if not target.exists():
         print(f"[fix] routing.py not found at {target}, skipping")
         return False
 
-    patched_code = '''"""Patched routing module - skips _IncludedRouter objects."""
-from typing import Any, Dict, List, Optional, Sequence, Tuple
+    patched_code = '''"""Patched routing helpers that ignore vLLM _IncludedRouter objects."""
+from typing import Any, Dict, Optional, Sequence
 
-from prometheus_fastapi_instrumentator.routing import _get_route_name as _original_get_route_name
+
+def _route_path(route: Any) -> Optional[str]:
+    path = getattr(route, "path", None)
+    return path if isinstance(path, str) else None
 
 
 def _get_route_name(scope: Dict[str, Any], routes: Sequence[Any]) -> Optional[str]:
-    """Fallback-safe version that handles _IncludedRouter."""
     for route in routes:
-        if not hasattr(route, "path"):
+        path = _route_path(route)
+        if path is None:
+            continue
+        if path == scope.get("path"):
+            return path
+        matches = getattr(route, "matches", None)
+        if matches is None:
             continue
         try:
-            result = _original_get_route_name(scope, [route])
-            if result is not None:
-                return result
-        except (AttributeError, TypeError):
+            match, child_scope = matches(scope)
+        except Exception:
             continue
+        matched_route = child_scope.get("route") if isinstance(child_scope, dict) else None
+        matched_path = _route_path(matched_route)
+        if matched_path:
+            return matched_path
     return None
 
 
 def get_route_name(request: Any) -> Optional[str]:
-    from prometheus_fastapi_instrumentator.routing import get_route_name as _original
-    try:
-        return _original(request)
-    except AttributeError:
+    app = getattr(request, "app", None)
+    if app is None:
         return None
+    routes = getattr(app, "routes", None)
+    if routes is None:
+        return None
+    scope = getattr(request, "scope", None)
+    if not isinstance(scope, dict):
+        return None
+    return _get_route_name(scope, routes)
 '''
     target.write_text(patched_code, encoding="utf-8")
     print(f"[fix] Patched {target}")
     return True
 
 
-def patch_vllm_metrics(site: Path) -> bool:
-    candidates = [
-        site / "vllm" / "entrypoints" / "serve" / "instrumentator" / "metrics.py",
-        site / "vllm" / "entrypoints" / "openai" / "instrumentator.py",
+def _iter_vllm_metric_candidates(site: Path) -> list[Path]:
+    base = site / "vllm"
+    if not base.exists():
+        return []
+    explicit = [
+        base / "entrypoints" / "serve" / "instrumentator" / "metrics.py",
+        base / "entrypoints" / "openai" / "instrumentator.py",
+        base / "entrypoints" / "openai" / "metrics.py",
     ]
+    discovered: list[Path] = []
+    for candidate in explicit:
+        if candidate.exists():
+            discovered.append(candidate)
+    for candidate in base.rglob("*.py"):
+        if "instrument" not in str(candidate).lower() and "metrics" not in str(candidate).lower():
+            continue
+        try:
+            content = candidate.read_text("utf-8")
+        except Exception:
+            continue
+        if "get_prometheus_registry" in content and "attach_router" in content:
+            if candidate not in discovered:
+                discovered.append(candidate)
+    return discovered
+
+
+def patch_vllm_metrics(site: Path) -> bool:
+    candidates = _iter_vllm_metric_candidates(site)
     patched = False
     for target in candidates:
-        if target.exists():
-            backup = target.with_suffix(target.suffix + ".bak")
-            if not backup.exists():
-                target.rename(backup)
-            content = target.read_text("utf-8")
-            # Replace attach_router with safe version
-            if "prometheus_fastapi_instrumentator" in content or "attach_router" in content:
-                new_content = '''import prometheus_client
+        backup = target.with_suffix(target.suffix + ".bak")
+        content = target.read_text("utf-8")
+        if not backup.exists():
+            backup.write_text(content, encoding="utf-8")
+        if "get_prometheus_registry" in content and "attach_router" in content:
+            new_content = '''import prometheus_client
 import regex as re
 from fastapi import FastAPI, Response
 from prometheus_client import make_asgi_app
@@ -93,9 +126,9 @@ def attach_router(app: FastAPI):
     metrics_route.path_regex = re.compile("^/metrics(?P<path>.*)$")
     app.routes.append(metrics_route)
 '''
-                target.write_text(new_content, encoding="utf-8")
-                print(f"[fix] Patched {target}")
-                patched = True
+            target.write_text(new_content, encoding="utf-8")
+            print(f"[fix] Patched {target}")
+            patched = True
     return patched
 
 
